@@ -6,21 +6,77 @@
 //
 
 import SwiftUI
+import UIKit
 
+// User Interface Code
 struct ContentView: View {
+    var username = "Emily"
+    @State var userSelect = ""
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            VStack {
+                Spacer()
+                Image("wolfimage")
+                Spacer()
+                Text("Welcome "+username)
+                Spacer()
+                HStack() {
+                    Spacer()
+                    Button(
+                        action: {
+                            print("Home")
+                            userSelect = "house.fill"
+                        },
+                        label: {
+                            Image(systemName: "house.fill")
+                        }).buttonStyle(.borderedProminent).controlSize(.large)
+                    Spacer()
+                    Button(
+                        action: {
+                            print("Settings")
+                            userSelect = "gearshape.fill"
+                        },
+                        label: {
+                                Image(systemName: "gearshape.fill")
+                        }).buttonStyle(.borderedProminent).controlSize(.large)
+                    Spacer()
+                }
+                Spacer()
+                HStack() {
+                    Spacer()
+                    Button(
+                        action: {
+                            print("Friends")
+                            userSelect = "figure.2.arms.open"
+                        },
+                        label: {
+                            Image(systemName: "figure.2.arms.open")
+                        }).buttonStyle(.borderedProminent).controlSize(.large)
+                    Spacer()
+                    Button(
+                        action: {
+                            print("Maps")
+                            userSelect = "map.fill"
+                        },
+                        label: {
+                            Image(systemName: "map.fill")
+                        }).buttonStyle(.borderedProminent).controlSize(.large)
+                    Spacer()
+                }
+                Spacer()
+                Image(systemName:userSelect)
+            }
         }
-        .padding()
     }
 }
+    
+
+// used for creating the canvas
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        // create several content views to make several screens with different devices etc
         ContentView()
     }
 }
