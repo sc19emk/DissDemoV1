@@ -11,7 +11,7 @@ import SwiftUI
 struct DissDemoV1App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            homePage()
         }
     }
 }
