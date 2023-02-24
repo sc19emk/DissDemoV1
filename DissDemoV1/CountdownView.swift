@@ -9,14 +9,23 @@ import SwiftUI
 
 struct CountdownView: View {
     var body: some View {
-        ZStack{
-            Color.blue.ignoresSafeArea()
-            VStack{
-                Text("Countdown Page").font(.title).bold()
-                Text("Set a time for getting home - if not deactivated automatically contact friends / emergency services.")
-                    .multilineTextAlignment(.center)
+        VStack {
+            Text("Countdown").font(.title).bold()
+            ProgressView(value: 5, total: 15)
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Seconds Elapsed")
+                        .font(.caption)
+                    Label("300", systemImage: "hourglass.bottomhalf.fill")
+                }
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text("Seconds Remaining")
+                        .font(.caption)
+                    Label("600", systemImage: "hourglass.tophalf.fill")
+                }
             }
-        }
+        }.padding()
     }
 }
 

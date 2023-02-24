@@ -8,30 +8,60 @@
 import SwiftUI
 import Foundation
 import AVFoundation // library for playing sound effects
+import UIKit
 
 var audioPlayer = AVAudioPlayer() // variable for sound effect
-var playing = false
 
 struct AlarmView: View {
+    @State var playing = false // is alarm currently playing
+    let emergencyString = "999" // for quick dial
     var body: some View {
         VStack{
-            Text("Alarm Page").font(.title).bold()
-            //Text("Loud SOS alarm - to attract attention. - When pressed could record location- send an alert to friends.- **After 10 seconds calls 999?**")
-                .multilineTextAlignment(.center)
-
-            Button("Alarm!") {
-                playSound()
+            NavigationStack {
+                Text("Alarm Page").font(.title).bold()
+                    .multilineTextAlignment(.center)
+                Spacer()
+                if playing==false {
+                    Button("Play Alarm!") {
+                        playSound()
+                        self.playing = true // changes button state
+                    }.fixedSize()
+                    .frame(width: 340, height: 220)
+                    .background(Color.red)
+                    .foregroundColor (.white)
+                    .accentColor(.pink)
+                    .cornerRadius(20)
+                    
+                }
+                else {
+                    Button("Stop Alarm") {
+                        stopSound()
+                        self.playing = false // changes button state
+                    }.fixedSize()
+                    .frame(width: 340, height: 220)
+                    .background(Color.blue)
+                    .foregroundColor (.white)
+                    .accentColor(.red)
+                    .cornerRadius(20)
+                }
+                Spacer()
+                
+                Button(action: {
+                    let telephone = "tel://"
+                    let formattedString = telephone + emergencyString
+                    guard let url = URL(string: formattedString) else { return }
+                    UIApplication.shared.open(url)
+                    }) {
+                        Image(systemName: "phone.connection.fill")
+                        Text("Quick Dial   ")
+                }
+                    .fixedSize()
+                    .frame(width: 340, height: 100)
+                    .background(Color.red)
+                    .foregroundColor (.white)
+                    .accentColor(.red)
+                    .cornerRadius(20)
             }
-                .controlSize(.large)
-                .buttonStyle(.borderedProminent)
-                .accentColor(.red)
-            
-            Button("stop alarm") {
-                stopSound()
-            }
-                .controlSize(.large)
-                .buttonStyle(.borderedProminent)
-                .accentColor(.blue)
         }
     }
     func playSound() {
@@ -57,3 +87,7 @@ struct AlarmView_Previews: PreviewProvider {
         AlarmView()
     }
 }
+
+
+
+

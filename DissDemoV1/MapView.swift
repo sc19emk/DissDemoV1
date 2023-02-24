@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-
 import MapKit // for map view
+
 
 // Map Page Code
 struct MapView: View {
@@ -24,6 +24,10 @@ struct MapView: View {
                     .multilineTextAlignment(.center)
             }
         }
+    }
+    func location() {
+        
+        
     }
 }
 
