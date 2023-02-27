@@ -13,7 +13,7 @@ import UIKit
 struct HomeView: View {
     //let theme: Theme
     var body: some View {
-        var username = "Emily"
+        let username = "Emily" //change to var when taking input...
         let emergencyString = "999"
         NavigationStack {
             VStack {
