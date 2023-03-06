@@ -25,9 +25,10 @@ struct HomeView: View {
                         Image(systemName: "figure.2.arms.open")
                         Text("Friends         ")
                     }
-                    .padding(20.0)
-                    .controlSize(.large)
+                        .padding(20.0)
+                        .controlSize(.large)
                         .buttonStyle(.borderedProminent)
+                        .accentColor(.black)
                     
                     Spacer()
                     
@@ -38,7 +39,7 @@ struct HomeView: View {
                         Image(systemName: "gearshape.fill")
                         Text("Settings     ")
                         
-                    }.controlSize(.large)
+                    }   .controlSize(.large)
                         .buttonStyle(.borderedProminent)
                         .padding(.trailing, 20.0)
                         .accentColor(.black)
@@ -56,7 +57,7 @@ struct HomeView: View {
                     } label: {
                         Image(systemName: "timer")
                         Text("Countdown   ")
-                    }.controlSize(.large)
+                    }   .controlSize(.large)
                         .buttonStyle(.borderedProminent)
                         .padding(20.0)
                         .accentColor(.black)
@@ -69,7 +70,7 @@ struct HomeView: View {
                     } label: {
                         Image(systemName: "map.fill")
                         Text("Maps           ")
-                    }.controlSize(.large)
+                    }   .controlSize(.large)
                         .buttonStyle(.borderedProminent)
                         .padding(.trailing, 20.0)
                         .accentColor(.black)
@@ -108,7 +109,7 @@ struct HomeView: View {
                         AlarmView()
                     } label: {
                         Image(systemName: "light.beacon.max.fill")
-                        Text("Alarm           ")
+                        Text("Alarm             ")
                     }
                         .controlSize(.large)
                         .buttonStyle(.borderedProminent)
