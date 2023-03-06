@@ -14,6 +14,8 @@ struct CountdownView: View {
     
     var body: some View {
         VStack {
+            
+            Spacer()
             Text ("\(timerModel.time)") //displays current countdowns's time set/remaining
                 .font(.system(size:100, weight: .medium, design: .monospaced)) // customising font
                 .alert("Playing SOS Alarm", isPresented: $timerModel.alert) { // alert when countdown ends
@@ -33,14 +35,15 @@ struct CountdownView: View {
                 }   .disabled(timerModel.running)
                     .tint(.black)
                     .font(.title2)
-                Button ("Cancel", action: timerModel.reset) // cancel countdown button
+                Button ("Cancel", action: timerModel.cancel) // cancel countdown button
                     .tint(.red)
                     .disabled(timerModel.running==false)
                     .font(.title2)
             }
+            Spacer()
             
         }.onReceive(timer) { _ in
-            timerModel.updateCountdown()
+            timerModel.countdown()
         } // uses the system timer to keep the timer object correct
     }
 }
@@ -68,7 +71,7 @@ extension CountdownView {
         }
         
         // function to update the time displayed on the countdown clock
-        func updateCountdown() {
+        func countdown() {
             guard running else {return } // only allowed to run when countdown is active
             let currentDate = Date ()
             let duration = endDate.timeIntervalSince1970 - currentDate.timeIntervalSince1970
@@ -91,7 +94,7 @@ extension CountdownView {
         }
         
         // function to stop the current countdown
-        func reset() {
+        func cancel() {
             self.minutes = Float(startTime)
             self.running = false
             self.time = "\(Int(minutes)):00"

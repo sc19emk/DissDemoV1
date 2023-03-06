@@ -44,11 +44,13 @@ struct HomeView: View {
                         .padding(.trailing, 20.0)
                         .accentColor(.black)
                 }
-                Image("wolfimage")
-                Spacer()
                 Text("Welcome, "+username)
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.semibold)
+                
+                Image("wolfimage")
+                
+                Spacer()
             
                 HStack{
                     // link to countdown page
@@ -56,11 +58,15 @@ struct HomeView: View {
                         CountdownView()
                     } label: {
                         Image(systemName: "timer")
-                        Text("Countdown   ")
-                    }   .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(20.0)
+                        Text("Countdown")
+                    }   .frame(width: 150, height: 50)
+                        .background(.thinMaterial)
+                        .overlay(RoundedRectangle(cornerRadius: 10)
+                        .stroke (lineWidth: 2))
+                        .padding()
                         .accentColor(.black)
+                        .fontWeight(.bold)
+                        
                     
                     Spacer()
                     
@@ -69,38 +75,44 @@ struct HomeView: View {
                         MapView()
                     } label: {
                         Image(systemName: "map.fill")
-                        Text("Maps           ")
-                    }   .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(.trailing, 20.0)
-                        .accentColor(.black)
+                        Text("Map")
+                    }
+                    .frame(width: 150, height: 50)
+                    .background(.thinMaterial)
+                    .overlay(RoundedRectangle(cornerRadius: 10)
+                    .stroke (lineWidth: 2))
+                    .padding()
+                    .accentColor(.black)
+                    .fontWeight(.bold)
                     
                 }
                 
                 HStack{
                     // link to text to speech page
+                    Spacer()
                     NavigationLink {
                         SpeechView()
                     } label: {
-                        Image(systemName: "ellipsis.bubble.fill")
-                        Text("Speech          ")
-                    }.controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(20.0)
-                        .accentColor(.black)
-                    
-                    Spacer()
-                    
+                        Image(systemName: "ellipsis.bubble")
+                            .renderingMode(.original)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .accentColor(.black)
+                            
+                    }
                     // link to ADVICE page
+                    Spacer()
+                    Spacer()
                     NavigationLink {
                         AdviceView()
                     } label: {
-                        Image(systemName: "newspaper.fill")
-                        Text("Advice        ")
-                    }.controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(.trailing, 20.0)
-                        .accentColor(.black)
+                        Image(systemName: "newspaper")
+                            .renderingMode(.original)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    Spacer()
+                     
 
                 }
                 HStack {
