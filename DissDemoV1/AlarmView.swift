@@ -5,6 +5,11 @@
 //  Created by Emily Kerkhof on 05/02/2023.
 //
 
+// TO DO:
+// CHANGE TO FULL VOLUME
+// WORK ON SILENT MODE
+// Stops when app is closed
+
 import SwiftUI
 import Foundation
 import AVFoundation // library for playing sound effects
@@ -69,10 +74,16 @@ struct AlarmView: View {
         let url = URL(fileURLWithPath: path)
         do {
             // create your audioPlayer in your parent class as a property
-            // audioPlayer.numberOfLoops = -1 isnt working...?
             audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer.play()
-            audioPlayer.numberOfLoops = -1
+            audioPlayer.volume = 1.0 // max volume
+            // change settings to play on silent mode
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.playback)
+            } catch(let error) {
+                print(error.localizedDescription)
+            }
+            audioPlayer.play() // play the alarm sound effect
+            audioPlayer.numberOfLoops = -1 // loop continuouslt
         } catch {
             print("couldn't load the file")
         }

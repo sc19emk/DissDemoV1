@@ -84,14 +84,13 @@ struct HomeView: View {
                     .padding()
                     .accentColor(.black)
                     .fontWeight(.bold)
-                    
                 }
                 
                 HStack{
                     // link to text to speech page
                     Spacer()
                     NavigationLink {
-                        SpeechView()
+                        VoiceBoxView()
                     } label: {
                         Image(systemName: "ellipsis.bubble")
                             .renderingMode(.original)
