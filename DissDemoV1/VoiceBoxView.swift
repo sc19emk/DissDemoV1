@@ -11,7 +11,7 @@ import AVFoundation // library for playing sound effects
 import UIKit
 
 struct VoiceBoxView: View {
-    @State var select: Int = 0 // selected conversation (none)
+    //@State var select: Int = 0 // selected conversation (none)
     
     
     var body: some View {
@@ -24,21 +24,22 @@ struct VoiceBoxView: View {
                 NavigationLink {
                     TranscriptView()
                 } label: {
-                    Text("Dialog 1 - Short Conversation")
+                    Text("Conversation 1 - Short Conversation")
                 }.simultaneousGesture(TapGesture().onEnded{
-                    selectConvo1()
+                    playConvo1()
+                    //selectConvo1()
                 })
             }
         }
     }
     
-    func selectConvo1() {
-        playDialog1()
-        select=1
-        
-    }
-    
-    func playDialog1() {
+//    func selectConvo1() {
+//        playConvo1()
+//        select=1
+//
+//    }
+//
+    func playConvo1() {
         let path = Bundle.main.path(forResource: "ShortConvo1.mp3", ofType: nil)!
         let url = URL(fileURLWithPath: path)
         do {
@@ -65,7 +66,7 @@ struct TranscriptView: View {
     
     var body: some View {
         VStack{
-            Text("Dialog 1 Page")
+            Text("Conversation 1 Page")
             Group{
                 Text("Male: Hello?")
                 Text("You: Hey!")
@@ -83,12 +84,29 @@ struct TranscriptView: View {
             Spacer()
             
             if playing==true {
-                Button("Stop Dialog!") {
+                Button("Pause Conversation") {
                     stopSound()
                     self.playing = false // changes button state
                 }
+//                Button("End Conversation!") {
+//                    stopSound()
+//                    self.playing = false // changes button state
+//                }
+            }
+            else if playing==false {
+                Button("Resume Conversation") {
+                    resumeSound()
+                    self.playing = true // changes button state
+                }
             }
         }
+    }
+    func resumeSound() {
+        audioPlayer.play()
+    }
+    
+    func pauseSound() {
+        audioPlayer.pause()
     }
 
     func stopSound() {

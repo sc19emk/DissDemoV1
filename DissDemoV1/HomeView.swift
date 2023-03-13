@@ -136,13 +136,10 @@ struct HomeView: View {
                         guard let url = URL(string: formattedString) else { return }
                         UIApplication.shared.open(url)
                         }) {
-                            Image(systemName: "phone.connection.fill")
-                            Text("Quick Dial   ")
+                            Image(systemName: "phone.fill").resizable().scaledToFill()
+                            Text("Quick Dial")
+                        
                     }
-                        .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(.trailing, 20.0)
-                        .accentColor(.black)
                         
                 }
             }.padding()

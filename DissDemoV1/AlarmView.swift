@@ -7,7 +7,6 @@
 
 // TO DO:
 // CHANGE TO FULL VOLUME
-// WORK ON SILENT MODE
 // Stops when app is closed
 
 import SwiftUI
@@ -75,8 +74,8 @@ struct AlarmView: View {
         do {
             // create your audioPlayer in your parent class as a property
             audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer.volume = 1.0 // max volume
-            // change settings to play on silent mode
+            audioPlayer.volume = 1.0 // max volume - doeant work
+            // change settings to play on silent mode - works :)
             do {
                 try AVAudioSession.sharedInstance().setCategory(.playback)
             } catch(let error) {
