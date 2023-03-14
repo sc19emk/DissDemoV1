@@ -11,139 +11,87 @@ import UIKit
 
 // User Interface Code
 struct HomeView: View {
-    //let theme: Theme
+    var viewSelected: String = ""
+    let emergencyString = "999"
+    private let pages: [[String]] = [["Map","location.square"],["Advice","character.book.closed.fill"],["Voice Box","speaker.wave.2.bubble.left.fill"],["Countdown","timer.square"],["Alarm","light.beacon.max"],["Quick Dial","phone.bubble.left.fill"]] // titles and related images
+    private let columns = [GridItem(.adaptive(minimum: 170))] // grid item columns, adaptive works in landscape too
     var body: some View {
-        let username = "Emily" //change to var when taking input...
-        let emergencyString = "999"
-        NavigationStack {
-            VStack {
-                HStack{
-                    // link to friends page
-                    NavigationLink {
-                        //FriendView()
-                    } label: {
-                        Image(systemName: "figure.2.arms.open")
-                        Text("Friends         ")
+        NavigationView {
+            LazyVGrid(columns: columns, spacing: 15) {
+                ForEach(pages, id: \.self) { page in
+                    ZStack {
+                        Rectangle()
+                            .foregroundColor(Color.white)
+                            .frame(width: 170, height: 170)
+                            .cornerRadius(30)
+                            .border(Color.gray, width: /*@START_MENU_TOKEN@*/5/*@END_MENU_TOKEN@*/)
+                        if "\(page[0])" == "Quick Dial" {
+                            // link to quick dial (stays on page)
+                            Button(action: {
+                                let telephone = "tel://"
+                                let formattedString = telephone + emergencyString
+                                guard let url = URL(string: formattedString) else { return }
+                                UIApplication.shared.open(url)
+                                }) { VStack {
+                                    // same formatting as below...
+                                    Image(systemName: "\(page[1])")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: 100, maxHeight: 100)
+                                    Text("\(page[0])")
+                                        .font(.system(size: 20, design: .rounded))
+                                        .bold()
+                                    }
+                                }
+                        }
+                        else {
+                            // all other buttons go to a new view
+                            NavigationLink {
+                                whichView(viewSelected: "\(page[0])")
+                            } label: {
+                                VStack {
+                                    Image(systemName: "\(page[1])")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: 100, maxHeight: 100)
+                                    Text("\(page[0])")
+                                        .font(.system(size: 20, design: .rounded))
+                                        .bold()
+                                }
+                            }
+                        }
                     }
-                        .padding(20.0)
-                        .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .accentColor(.black)
-                    
-                    Spacer()
-                    
-                    // link to settings page
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                        Text("Settings     ")
-                        
-                    }   .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(.trailing, 20.0)
-                        .accentColor(.black)
-                }
-                Text("Welcome, "+username)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                
-                Image("wolfimage")
-                
-                Spacer()
-            
-                HStack{
-                    // link to countdown page
-                    NavigationLink {
-                        CountdownView()
-                    } label: {
-                        Image(systemName: "timer")
-                        Text("Countdown")
-                    }   .frame(width: 150, height: 50)
-                        .background(.thinMaterial)
-                        .overlay(RoundedRectangle(cornerRadius: 10)
-                        .stroke (lineWidth: 2))
-                        .padding()
-                        .accentColor(.black)
-                        .fontWeight(.bold)
-                        
-                    
-                    Spacer()
-                    
-                    // link to maps page
-                    NavigationLink {
-                        MapView()
-                    } label: {
-                        Image(systemName: "map.fill")
-                        Text("Map")
-                    }
-                    .frame(width: 150, height: 50)
-                    .background(.thinMaterial)
-                    .overlay(RoundedRectangle(cornerRadius: 10)
-                    .stroke (lineWidth: 2))
-                    .padding()
-                    .accentColor(.black)
-                    .fontWeight(.bold)
                 }
                 
-                HStack{
-                    // link to text to speech page
-                    Spacer()
-                    NavigationLink {
-                        VoiceBoxView()
-                    } label: {
-                        Image(systemName: "ellipsis.bubble")
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .accentColor(.black)
-                            
-                    }
-                    // link to ADVICE page
-                    Spacer()
-                    Spacer()
-                    NavigationLink {
-                        AdviceView()
-                    } label: {
-                        Image(systemName: "newspaper")
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                     
-
-                }
-                HStack {
-                    // link to alarm page
-                    NavigationLink {
-                        AlarmView()
-                    } label: {
-                        Image(systemName: "light.beacon.max.fill")
-                        Text("Alarm             ")
-                    }
-                        .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .padding(20.0)
-                        .accentColor(.black)
-                    
-                    Spacer()
-                    
-                    // link to quick dial (stays on page)
-                    Button(action: {
-                        let telephone = "tel://"
-                        let formattedString = telephone + emergencyString
-                        guard let url = URL(string: formattedString) else { return }
-                        UIApplication.shared.open(url)
-                        }) {
-                            Image(systemName: "phone.fill").resizable().scaledToFill()
-                            Text("Quick Dial")
-                        
-                    }
-                        
-                }
-            }.padding()
+            }
+        .navigationTitle("Home")
+        .padding()
         }
+    }
+    func whichView(viewSelected: String) -> AnyView {
+        print("Recieved: \(viewSelected)")
+        if viewSelected == "Map" {
+            return AnyView(MapView())
+        }
+        if viewSelected == "Advice" {
+            return AnyView(AdviceView())
+        }
+        if viewSelected == "Voice Box" {
+            return AnyView(VoiceBoxView())
+        }
+        if viewSelected == "Countdown" {
+            return AnyView(CountdownView())
+        }
+        if viewSelected == "Alarm" {
+            return AnyView(AlarmView())
+        }
+        if viewSelected == "Quick Dial" {
+            return AnyView(CountdownView())
+        }
+        else {
+            return AnyView(SettingsView())
+        }
+            
     }
 }
     
@@ -160,4 +108,3 @@ struct HomeView_Previews: PreviewProvider {
 
 // might need to find pixel width / height of screeen
 // use to scale buttons and icons .frame(height: VARIABLE)
-

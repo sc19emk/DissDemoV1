@@ -85,13 +85,6 @@ struct PostView: View {
     }
 }
 
-struct BlogPost: Identifiable {
-    var id : Int
-    var name : String
-    var image : String
-    var details : String
-}
-
 struct BlogPostCard: View {
     @Environment(\.colorScheme) var colorScheme
     var blogPost: BlogPost
@@ -159,6 +152,13 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
+}
+
+struct BlogPost: Identifiable {
+    var id : Int
+    var name : String
+    var image : String
+    var details : String
 }
 
 var allPosts = [

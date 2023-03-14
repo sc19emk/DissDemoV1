@@ -37,10 +37,11 @@ struct CountdownView: View {
                     VStack {
                         Text ("\(timerModel.time)") //displays current countdowns's time set/remaining
                             .font(.system(size:70, weight: .medium, design: .monospaced)) // customising font
-                        Slider(value: $timerModel.minutes, in: 0...maxValue) // creating the slider, in=range, step=interval
-                            .padding()
-                            .disabled(timerModel.running) // if timer is running, cannot access slider
-                            .tint(.red) // need to change for night appearence
+                        // Slider currently disabled as cannot update to max time value correctly
+//                        Slider(value: $timerModel.minutes, in: 0...maxValue) // creating the slider, in=range, step=interval
+//                            .padding()
+//                            .disabled(timerModel.running) // if timer is running, cannot access slider
+//                            .tint(.red) // need to change for night appearence
                         
                     }
                 }
@@ -129,8 +130,18 @@ extension CountdownView {
             
             // if less than an hour remains
             if duration < 3600.0 {
+                //print(seconds)
                 self.time = String(format: "%d:%02d", minutes, seconds) // display remaining time...
-                print("Less than an hour")
+                // below not formatting correctly
+//                if seconds < 10 {
+//                    print("less than 10")
+//                    self.time = String(format: "%d:0%02d", minutes, seconds) // display remaining time...
+//                }
+//                else {
+//                    print("more than 10")
+//                    self.time = String(format: "%d:%02d", minutes, seconds) // add a 0 to seconds display
+//                }
+                
             }
             // if more than an hour remains
             else {
@@ -141,7 +152,6 @@ extension CountdownView {
                 else {
                     self.time = String("\(h):\(m):\(s)") // adjust to show full time remaining
                 }
-                print("more than 60")
             }
         }
         
@@ -196,7 +206,7 @@ struct TimePicker: View  {
             HStack {
                 ForEach(0..<2) { column in
                     Picker(self.data[column].0, selection: self.$selection[column]) {
-                        ForEach(0..<self.data[column].1.count) { row in
+                        ForEach(0..<Int(self.data[column].1.count)) { row in
                             Text(verbatim: self.data[column].1[row])
                             .tag(self.data[column].1[row])
                         }
