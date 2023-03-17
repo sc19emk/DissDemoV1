@@ -6,12 +6,21 @@
 //
 
 import SwiftUI
+import Firebase // for database access
 
 @main
 struct Application: App {
+    
+    @StateObject var dataManager = DataManager()
+    
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            //FriendView().environmentObject(dataManager)
+            LogInView()
         }
     }
 }

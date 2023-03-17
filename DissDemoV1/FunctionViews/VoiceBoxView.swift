@@ -3,7 +3,7 @@
 //  DissDemoV1
 //
 //  Created by Emily Kerkhof on 05/02/2023.
-// need to refactor!
+//  Navigation bars stacking ;<
 
 import SwiftUI
 import Foundation
