@@ -20,7 +20,6 @@ struct FriendView: View {
             }
             Label("\(friend.number)", systemImage: "phone.arrow.down.left.fill")
         }.font(.caption)
-        .foregroundColor(friend.theme.accentColor)
     }
 }
 
@@ -30,7 +29,20 @@ struct FriendView_Previews: PreviewProvider {
     static var friend = Friend.sampleData[0] // example data
     static var previews: some View {
         FriendView(friend: friend)
-            .background(friend.theme.mainColor)
             .previewLayout(.fixed(width: 400, height: 60))
     }
+}
+
+struct Friend {
+    var name: String
+    var messages: [String]
+    var number: Int
+}
+
+extension Friend {
+    static let sampleData: [Friend] =
+    [
+        Friend(name: "Friend 1", messages: ["Hello", "Goodbye"], number: 01234),
+        Friend(name: "Friend 2", messages: ["HELP", "LOCATION"], number: 56789)
+    ]
 }

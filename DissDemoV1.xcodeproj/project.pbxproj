@@ -18,9 +18,7 @@
 		6C59FC1E29A77A8300C56939 /* alarmSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C59FC1D29A77A8300C56939 /* alarmSound.mp3 */; };
 		6C6DCC6E29B792210014F5FF /* ShortConvo1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C6DCC6D29B792210014F5FF /* ShortConvo1.mp3 */; };
 		6CB918AB29A8C98B00F0AAF2 /* AdviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CB918AA29A8C98B00F0AAF2 /* AdviceView.swift */; };
-		6CDA107D29A8E48000D2B491 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDA107C29A8E48000D2B491 /* Theme.swift */; };
-		6CDA107F29A8FAFA00D2B491 /* Friends.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDA107E29A8FAFA00D2B491 /* Friends.swift */; };
-		6CE629DE298FEEF900386007 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629DD298FEEF900386007 /* FriendsView.swift */; };
+		6CE629DE298FEEF900386007 /* FriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629DD298FEEF900386007 /* FriendView.swift */; };
 		6CE629E0298FEF6F00386007 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629DF298FEF6F00386007 /* MapView.swift */; };
 		6CE629E2298FF21B00386007 /* VoiceBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E1298FF21B00386007 /* VoiceBoxView.swift */; };
 		6CE629E4298FF25C00386007 /* CountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E3298FF25C00386007 /* CountdownView.swift */; };
@@ -60,9 +58,7 @@
 		6C59FC1D29A77A8300C56939 /* alarmSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alarmSound.mp3; path = "../../../Documents - Emily’s MacBook Pro/University/Dissertation/DissDemoV1/DissDemoV1/alarmSound.mp3"; sourceTree = "<group>"; };
 		6C6DCC6D29B792210014F5FF /* ShortConvo1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = ShortConvo1.mp3; path = "../../../../Music/Music/Media.localized/Music/Unknown Artist/Unknown Album/DissAudios/ShortConvo1.mp3"; sourceTree = "<group>"; };
 		6CB918AA29A8C98B00F0AAF2 /* AdviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdviceView.swift; sourceTree = "<group>"; };
-		6CDA107C29A8E48000D2B491 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		6CDA107E29A8FAFA00D2B491 /* Friends.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Friends.swift; sourceTree = "<group>"; };
-		6CE629DD298FEEF900386007 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
+		6CE629DD298FEEF900386007 /* FriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendView.swift; sourceTree = "<group>"; };
 		6CE629DF298FEF6F00386007 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		6CE629E1298FF21B00386007 /* VoiceBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceBoxView.swift; sourceTree = "<group>"; };
 		6CE629E3298FF25C00386007 /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
@@ -118,11 +114,10 @@
 		6C206AFB298ABC5C00EE2A82 /* DissDemoV1 */ = {
 			isa = PBXGroup;
 			children = (
-				6CDA107B29A8E45F00D2B491 /* Models */,
 				6C206AFC298ABC5C00EE2A82 /* Application.swift */,
 				6C206AFE298ABC5C00EE2A82 /* HomeView.swift */,
 				6C0D6B3D298D3868008B38F0 /* SettingsView.swift */,
-				6CE629DD298FEEF900386007 /* FriendsView.swift */,
+				6CE629DD298FEEF900386007 /* FriendView.swift */,
 				6CB918AA29A8C98B00F0AAF2 /* AdviceView.swift */,
 				6CE629DF298FEF6F00386007 /* MapView.swift */,
 				6CE629E1298FF21B00386007 /* VoiceBoxView.swift */,
@@ -160,15 +155,6 @@
 				6C206B19298ABC5E00EE2A82 /* DissDemoV1UITestsLaunchTests.swift */,
 			);
 			path = DissDemoV1UITests;
-			sourceTree = "<group>";
-		};
-		6CDA107B29A8E45F00D2B491 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				6CDA107C29A8E48000D2B491 /* Theme.swift */,
-				6CDA107E29A8FAFA00D2B491 /* Friends.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,13 +290,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6CE629E6298FF29E00386007 /* QuickDialView.swift in Sources */,
-				6CE629DE298FEEF900386007 /* FriendsView.swift in Sources */,
+				6CE629DE298FEEF900386007 /* FriendView.swift in Sources */,
 				6C206AFF298ABC5C00EE2A82 /* HomeView.swift in Sources */,
 				6CE629E0298FEF6F00386007 /* MapView.swift in Sources */,
-				6CDA107D29A8E48000D2B491 /* Theme.swift in Sources */,
 				6CE629E4298FF25C00386007 /* CountdownView.swift in Sources */,
 				6C206AFD298ABC5C00EE2A82 /* Application.swift in Sources */,
-				6CDA107F29A8FAFA00D2B491 /* Friends.swift in Sources */,
 				6CE629E2298FF21B00386007 /* VoiceBoxView.swift in Sources */,
 				6CE629E8298FFB6100386007 /* AlarmView.swift in Sources */,
 				6CB918AB29A8C98B00F0AAF2 /* AdviceView.swift in Sources */,
