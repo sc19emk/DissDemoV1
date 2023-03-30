@@ -20,51 +20,64 @@ struct AlarmView: View {
     @State var playing = false // is alarm currently playing
     let emergencyString = "999" // for quick dial
     var body: some View {
-        VStack{
-            NavigationStack {
-                Text("Alarm Page").font(.title).bold()
-                    .multilineTextAlignment(.center)
-                Spacer()
-                if playing==false {
-                    Button("Play Alarm!") {
-                        playSound()
-                        self.playing = true // changes button state
-                    }.fixedSize()
-                    .frame(width: 340, height: 220)
-                    .background(Color.red)
-                    .foregroundColor (.white)
-                    .accentColor(.pink)
-                    .cornerRadius(20)
-                    
-                }
-                else {
-                    Button("Stop Alarm") {
-                        stopSound()
-                        self.playing = false // changes button state
-                    }.fixedSize()
-                    .frame(width: 340, height: 220)
-                    .background(Color.blue)
-                    .foregroundColor (.white)
-                    .accentColor(.red)
-                    .cornerRadius(20)
-                }
-                Spacer()
+        NavigationStack {
+            
+            ZStack{
+                Color.black.ignoresSafeArea()
                 
-                Button(action: {
-                    let telephone = "tel://"
-                    let formattedString = telephone + emergencyString
-                    guard let url = URL(string: formattedString) else { return }
-                    UIApplication.shared.open(url)
-                    }) {
-                        Image(systemName: "phone.connection.fill")
-                        Text("Quick Dial   ")
+                RoundedRectangle(cornerRadius: 0, style: .continuous)
+                    .foregroundStyle(.linearGradient(colors: [.red, .pink], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 650, height: 400)
+                    .rotationEffect(.degrees(-10))
+                    .offset(y: -620)
+                
+                VStack {
+                    
+                    Text("Alarm Page").font(.title).bold()
+                        .multilineTextAlignment(.center)
+                        .offset(y: -160)
+                    Spacer()
+                    if playing==false {
+                        Button("Play Alarm!") {
+                            playSound()
+                            self.playing = true // changes button state
+                        }.fixedSize()
+                        .frame(width: 340, height: 220)
+                        .background(.linearGradient(colors: [.pink, .red], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .foregroundColor (.white)
+                        .accentColor(.pink)
+                        .cornerRadius(10)
+                        
+                    }
+                    else {
+                        Button("Stop Alarm") {
+                            stopSound()
+                            self.playing = false // changes button state
+                        }.fixedSize()
+                        .frame(width: 340, height: 220)
+                        .background(Color.blue)
+                        .foregroundColor (.white)
+                        .accentColor(.red)
+                        .cornerRadius(20)
+                    }
+                    Spacer()
+                    
+                    Button(action: {
+                        let telephone = "tel://"
+                        let formattedString = telephone + emergencyString
+                        guard let url = URL(string: formattedString) else { return }
+                        UIApplication.shared.open(url)
+                        }) {
+                            Image(systemName: "phone.connection.fill")
+                            Text("Quick Dial   ")
+                    }
+                        .fixedSize()
+                        .frame(width: 340, height: 100)
+                        .background(.linearGradient(colors: [.pink, .red], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .foregroundColor (.white)
+                        .accentColor(.red)
+                        .cornerRadius(20)
                 }
-                    .fixedSize()
-                    .frame(width: 340, height: 100)
-                    .background(Color.red)
-                    .foregroundColor (.white)
-                    .accentColor(.red)
-                    .cornerRadius(20)
             }
         }
     }

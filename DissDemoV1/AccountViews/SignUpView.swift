@@ -12,13 +12,15 @@
 //  Created by Emily Kerkhof on 17/03/2023.
 //
 
+// ADD TERMS AND CONDITIONS
+// add user alert when sign up fails
+
 import SwiftUI
 import Firebase
 
 struct SignUpView: View {
     @State private var username = ""
     @State private var email = ""
-    @State private var age = "" // convert to Int later
     @State private var phoneNumber = "" // convert to Int later
     @State private var password = ""
     @State private var password2 = ""
@@ -37,19 +39,6 @@ struct SignUpView: View {
         VStack {
             // groups as went over 10 items (max 10 items per object)
             Group {
-                TextField("Email", text: $email)
-                    .foregroundColor(.white)
-                    .textFieldStyle(.plain)
-                    .placeholder(when: email.isEmpty) {
-                        Text("Email")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
-                Rectangle()
-                    .frame(width:350,height: 1)
-                    .foregroundColor(.white)
-                
                 TextField("Username", text: $username)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
@@ -63,11 +52,11 @@ struct SignUpView: View {
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
-                TextField("Age", text: $age)
+                TextField("Email", text: $email)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: age.isEmpty) {
-                        Text("Age")
+                    .placeholder(when: email.isEmpty) {
+                        Text("Email")
                             .foregroundColor(.white)
                             .bold()
                             .italic()
@@ -115,9 +104,10 @@ struct SignUpView: View {
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
-            }
+                
             }
         }
+    }
     
     // page content , including colour scheme and sign up form
     var signUpContent: some View {
@@ -165,25 +155,72 @@ struct SignUpView: View {
                     Spacer()
                     
                 }.frame(width: 350)
-                .onAppear() {
-                    Auth.auth().addStateDidChangeListener { auth, user in
-                        if user != nil {
-                            userIsLoggedIn = true
+                    .onAppear() {
+                        Auth.auth().addStateDidChangeListener { auth, user in
+                            if user != nil {
+                                userIsLoggedIn = true
+                            }
                         }
                     }
-                }
             }.ignoresSafeArea()
         }
     }
     // adds email and password into auth - need to send other details into other table
     func signUp() {
-        Auth.auth().createUser(withEmail:email, password: password) { result, error in
-            if error != nil {
-                print(error!.localizedDescription)
+        let error = validate() // check fields
+        if error != nil {
+            // need to alert user why there is an error...
+            print(error!)
+        }
+        else {
+            Auth.auth().createUser(withEmail:email, password: password) { result, error2 in
+            // if there is an error creating the user account
+                if error2 != nil {
+                    print(error2!.localizedDescription)
+                }
+                else {
+                    let db = Firestore.firestore()
+                    //var ref: DocumentReference? = result!.user.uid
+                    db.collection("users").addDocument(data: [
+                        "username":username,
+                        "number":phoneNumber,
+                        "UID":result!.user.uid
+                    ]) {error3 in
+                        if let error3 = error3 {
+                            print("Error adding document: \(error3)")
+                        }
+                        else {
+                            print ("Document added with ID: ")
+                        }
+                    }
+                }
             }
         }
     }
+    // returns error message if incorrect
+    func validate() -> String? {
+        // are fields filled in
+        if username == "" || email == "" || phoneNumber == "" || password == "" || password2 == "" {
+            return "Please complete all the above fields"
+        }
+        // do passwords match
+        if password != password2 {
+            return "Passwords do not match"
+        }
+        // is password secure enough
+//        if isPasswordValid(password) == false {
+//            return "Password must be 8 characters, contains a number and a special character"
+//        }
+        
+        
+        return nil
+    }
+//    func isPasswordValid(_ password: String) -> Bool {
+//        let passwordTest = NSPredicate(format: "SELF MATCHES %@","^(?=.*[a-z])(?=.*[$@$#!%*?&]) [A-Za-z\\d$@$#!%*?&]{8,}")
+//        return passwordTest.evaluate (with: password)
+//    }
 }
+    
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {

@@ -12,35 +12,45 @@ import UIKit
 
 struct VoiceBoxView: View {
     var body: some View {
-        VStack{
-            NavigationStack {
-                Text("Vocie Box Page").font(.title).bold()
-                Text("Pre-recorded phrases soundboard with a male voice")
-                    .multilineTextAlignment(.center)
-                Spacer()
-                NavigationLink {
-                    TranscriptView(convoChoice: 1)
-                } label: {
-                    Text("1: SHORT - BOYFRIEND")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    playConvo(convoChoice: 1)
-                })
-                NavigationLink {
-                    TranscriptView(convoChoice: 2)
-                } label: {
-                    Text("2: LONG - BOYFRIEND")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    playConvo(convoChoice: 2)
-                })
-                NavigationLink {
-                    TranscriptView(convoChoice: 3)
-                } label: {
-                    Text("3: SHORT - FRIEND")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    playConvo(convoChoice: 3)
-                })
+        NavigationStack{
+            ZStack {
+                Color.black.ignoresSafeArea()
                 
-                Spacer()
+                RoundedRectangle(cornerRadius: 0, style: .continuous)
+                    .foregroundStyle(.linearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 650, height: 400)
+                    .rotationEffect(.degrees(-10))
+                    .offset(y: -620)
+                
+                VStack {
+                    Text("Vocie Box").font(.title).bold().offset(y: -160)
+                    Text("Pre-recorded phrases soundboard with a male voice")
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                    NavigationLink {
+                        TranscriptView(convoChoice: 1)
+                    } label: {
+                        Text("1: SHORT - BOYFRIEND")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        playConvo(convoChoice: 1)
+                    })
+                    NavigationLink {
+                        TranscriptView(convoChoice: 2)
+                    } label: {
+                        Text("2: LONG - BOYFRIEND")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        playConvo(convoChoice: 2)
+                    })
+                    NavigationLink {
+                        TranscriptView(convoChoice: 3)
+                    } label: {
+                        Text("3: SHORT - FRIEND")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        playConvo(convoChoice: 3)
+                    })
+                    
+                    Spacer()
+                }
             }
         }
     }

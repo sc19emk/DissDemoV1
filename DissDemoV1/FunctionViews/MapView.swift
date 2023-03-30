@@ -37,9 +37,9 @@ struct MapView: View {
                 } label: {
                     Text("Share Location")
                 }.frame(width: 150, height: 50)
-                    .background(.thinMaterial)
+                    .background(.linearGradient(colors: [.green, .yellow], startPoint: .top, endPoint: .bottomTrailing))
                     .overlay(RoundedRectangle(cornerRadius: 10)
-                    .stroke (lineWidth: 2))
+                    .stroke (lineWidth: 4))
                     .padding()
                     .accentColor(.black)
                     .fontWeight(.bold)

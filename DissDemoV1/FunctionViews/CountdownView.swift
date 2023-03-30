@@ -33,10 +33,12 @@ struct CountdownView: View {
         VStack {
             //Spacer()
             ZStack {
+                
                 if timerModel.running == true{
                     VStack {
                         Text ("\(timerModel.time)") //displays current countdowns's time set/remaining
                             .font(.system(size:70, weight: .medium, design: .monospaced)) // customising font
+                        
                         // Slider currently disabled as cannot update to max time value correctly
 //                        Slider(value: $timerModel.minutes, in: 0...maxValue) // creating the slider, in=range, step=interval
 //                            .padding()

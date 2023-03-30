@@ -12,11 +12,14 @@ import Firebase
 // Friend Page Code
 struct FriendView: View {
     @EnvironmentObject var dataManager: DataManager
+    
     var body: some View {
         NavigationView {
-            List(dataManager.contacts, id: \.id) { contact in
-                Text(contact.id)
-            }.navigationTitle("Contacts")
+            VStack {
+                List(dataManager.contacts, id: \.id) { contact in
+                    Text(contact.id)
+                }.navigationTitle("Contacts")
+            }
         }
     }
 }
@@ -25,7 +28,6 @@ struct FriendView: View {
 
 struct FriendView_Previews: PreviewProvider {
     static var previews: some View {
-        FriendView()
-            .environmentObject(DataManager())
+        FriendView().environmentObject(DataManager())
     }
 }

@@ -10,15 +10,24 @@ import SwiftUI
 
 // Settings Page Code
 struct SettingsView: View {
+    @EnvironmentObject var dataManager: DataManager
+    
     var body: some View {
-        ZStack{
-            Color.gray.ignoresSafeArea()
-            VStack{
-                Text("Settings Page").font(.title).bold()
-                Text("Allow user to update account settings, etc")
+        NavigationView {
+            VStack {
+                let currentUser = dataManager.account
+                let username = currentUser.username
+                let number = currentUser.number
+                let email = currentUser.email
+                Text("Username: \(username) ")
+                Text("Email: \(email) ")
+                Text("Contact Number: \(number) ")
+                
+//                List(dataManager.contacts, id: \.id) { contact in
+//                    Text(contact.id)
+//                }.navigationTitle("Contacts")
             }
         }
-        
     }
 }
 
@@ -26,7 +35,7 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        SettingsView().environmentObject(DataManager())
     }
 }
 
