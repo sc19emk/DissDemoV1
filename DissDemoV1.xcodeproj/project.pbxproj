@@ -18,7 +18,7 @@
 		6C206B1A298ABC5E00EE2A82 /* DissDemoV1UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C206B19298ABC5E00EE2A82 /* DissDemoV1UITestsLaunchTests.swift */; };
 		6C59FC1E29A77A8300C56939 /* alarmSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C59FC1D29A77A8300C56939 /* alarmSound.mp3 */; };
 		6C6DCC6E29B792210014F5FF /* ShortConvo1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C6DCC6D29B792210014F5FF /* ShortConvo1.mp3 */; };
-		6C7467B729C49DF80039F671 /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7467B629C49DF80039F671 /* LogInView.swift */; };
+		6C7467B729C49DF80039F671 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7467B629C49DF80039F671 /* SignInView.swift */; };
 		6C7467BA29C4B1D70039F671 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6C7467B929C4B1D70039F671 /* FirebaseAuth */; };
 		6C7467BC29C4B1D70039F671 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6C7467BB29C4B1D70039F671 /* FirebaseFirestore */; };
 		6C7467BE29C4B4540039F671 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6C7467BD29C4B4540039F671 /* GoogleService-Info.plist */; };
@@ -28,7 +28,6 @@
 		6CE629E0298FEF6F00386007 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629DF298FEF6F00386007 /* MapView.swift */; };
 		6CE629E2298FF21B00386007 /* VoiceBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E1298FF21B00386007 /* VoiceBoxView.swift */; };
 		6CE629E4298FF25C00386007 /* CountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E3298FF25C00386007 /* CountdownView.swift */; };
-		6CE629E6298FF29E00386007 /* QuickDialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E5298FF29E00386007 /* QuickDialView.swift */; };
 		6CE629E8298FFB6100386007 /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE629E7298FFB6100386007 /* AlarmView.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,7 +63,7 @@
 		6C206B19298ABC5E00EE2A82 /* DissDemoV1UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DissDemoV1UITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6C59FC1D29A77A8300C56939 /* alarmSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alarmSound.mp3; path = "../../../Documents - Emily’s MacBook Pro/University/Dissertation/DissDemoV1/DissDemoV1/alarmSound.mp3"; sourceTree = "<group>"; };
 		6C6DCC6D29B792210014F5FF /* ShortConvo1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = ShortConvo1.mp3; path = "../../../../Music/Music/Media.localized/Music/Unknown Artist/Unknown Album/DissAudios/ShortConvo1.mp3"; sourceTree = "<group>"; };
-		6C7467B629C49DF80039F671 /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
+		6C7467B629C49DF80039F671 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		6C7467BD29C4B4540039F671 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6C7467C129C4BC070039F671 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		6CB918AA29A8C98B00F0AAF2 /* AdviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdviceView.swift; sourceTree = "<group>"; };
@@ -72,7 +71,6 @@
 		6CE629DF298FEF6F00386007 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		6CE629E1298FF21B00386007 /* VoiceBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceBoxView.swift; sourceTree = "<group>"; };
 		6CE629E3298FF25C00386007 /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
-		6CE629E5298FF29E00386007 /* QuickDialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickDialView.swift; sourceTree = "<group>"; };
 		6CE629E7298FFB6100386007 /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,12 +125,10 @@
 			isa = PBXGroup;
 			children = (
 				6C7467BD29C4B4540039F671 /* GoogleService-Info.plist */,
-				6C7467B429C493460039F671 /* FunctionViews */,
 				6C206AFC298ABC5C00EE2A82 /* Application.swift */,
 				6C206AFE298ABC5C00EE2A82 /* HomeView.swift */,
+				6C7467B429C493460039F671 /* FunctionViews */,
 				6C7467B529C494010039F671 /* AccountViews */,
-				6C0D6B3D298D3868008B38F0 /* SettingsView.swift */,
-				6CE629DD298FEEF900386007 /* FriendView.swift */,
 				6C6DCC6D29B792210014F5FF /* ShortConvo1.mp3 */,
 				6C59FC1D29A77A8300C56939 /* alarmSound.mp3 */,
 				6C206B00298ABC5E00EE2A82 /* Assets.xcassets */,
@@ -174,7 +170,7 @@
 				6CE629E1298FF21B00386007 /* VoiceBoxView.swift */,
 				6CE629E3298FF25C00386007 /* CountdownView.swift */,
 				6CE629E7298FFB6100386007 /* AlarmView.swift */,
-				6CE629E5298FF29E00386007 /* QuickDialView.swift */,
+				6CE629DD298FEEF900386007 /* FriendView.swift */,
 			);
 			path = FunctionViews;
 			sourceTree = "<group>";
@@ -182,8 +178,9 @@
 		6C7467B529C494010039F671 /* AccountViews */ = {
 			isa = PBXGroup;
 			children = (
-				6C7467B629C49DF80039F671 /* LogInView.swift */,
+				6C7467B629C49DF80039F671 /* SignInView.swift */,
 				6C0D745729C8808700117D5D /* SignUpView.swift */,
+				6C0D6B3D298D3868008B38F0 /* SettingsView.swift */,
 				6C7467C129C4BC070039F671 /* Database.swift */,
 			);
 			path = AccountViews;
@@ -329,7 +326,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6CE629E6298FF29E00386007 /* QuickDialView.swift in Sources */,
 				6CE629DE298FEEF900386007 /* FriendView.swift in Sources */,
 				6C206AFF298ABC5C00EE2A82 /* HomeView.swift in Sources */,
 				6CE629E0298FEF6F00386007 /* MapView.swift in Sources */,
@@ -339,7 +335,7 @@
 				6CE629E2298FF21B00386007 /* VoiceBoxView.swift in Sources */,
 				6C0D745829C8808700117D5D /* SignUpView.swift in Sources */,
 				6CE629E8298FFB6100386007 /* AlarmView.swift in Sources */,
-				6C7467B729C49DF80039F671 /* LogInView.swift in Sources */,
+				6C7467B729C49DF80039F671 /* SignInView.swift in Sources */,
 				6CB918AB29A8C98B00F0AAF2 /* AdviceView.swift in Sources */,
 				6C0D6B3E298D3868008B38F0 /* SettingsView.swift in Sources */,
 			);

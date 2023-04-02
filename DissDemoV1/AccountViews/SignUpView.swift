@@ -143,7 +143,7 @@ struct SignUpView: View {
                     Spacer()
                     
                     NavigationLink {
-                        LogInView()
+                        SignInView()
                     } label: {
                         Text("Already have an account? \nClick here to log in!")
                             .bold()

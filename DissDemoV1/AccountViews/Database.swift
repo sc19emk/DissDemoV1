@@ -49,7 +49,6 @@ class DataManager: ObservableObject {
                     print(currentid)
                     
                     if currentid == id {
-                        print("yayyy im a genius")
                         let username = data["username"] as? String ?? "x"
                         let number = data["number"] as? String ?? "x"
                         let currentUser = Account(id:id, email:email, username:username, number:number)
@@ -79,9 +78,4 @@ class DataManager: ObservableObject {
             }
         }
     }
-    init() {
-        fetchAccount()
-        fetchContacts()
-    }
-    
 }

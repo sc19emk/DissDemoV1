@@ -19,8 +19,7 @@ struct Application: App {
     
     var body: some Scene {
         WindowGroup {
-            //FriendView().environmentObject(dataManager)
-            LogInView().environmentObject(DataManager())
+            SignInView().environmentObject(DataManager())
         }
     }
 }

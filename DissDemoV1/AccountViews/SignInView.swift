@@ -10,7 +10,7 @@ import Firebase
 
 //need to stop "back" from stacking
 
-struct LogInView: View {
+struct SignInView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var userIsLoggedIn =  false
@@ -119,7 +119,7 @@ struct LogInView: View {
 
 struct LogInView_Previews: PreviewProvider {
     static var previews: some View {
-        LogInView()
+        SignInView()
     }
 }
 

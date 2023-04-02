@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 
 // Settings Page Code
@@ -22,13 +23,21 @@ struct SettingsView: View {
                 Text("Username: \(username) ")
                 Text("Email: \(email) ")
                 Text("Contact Number: \(number) ")
-                
-//                List(dataManager.contacts, id: \.id) { contact in
-//                    Text(contact.id)
-//                }.navigationTitle("Contacts")
+                NavigationLink {
+                    SignInView()
+                } label: {
+                    Text("Sign Out")
+                }
+
             }
-        }
+        }//.navigationBarBackButtonHidden(true)
     }
+    
+//    func signOut() {
+//        try! Auth.auth().signOut()
+//        dataManager.currentUser = ""
+//        dataManager.userIsLoggedIn = false
+//    }
 }
 
 // used for creating the canvas
