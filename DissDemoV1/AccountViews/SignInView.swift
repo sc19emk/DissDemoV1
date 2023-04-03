@@ -14,6 +14,8 @@ struct SignInView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var dataManager: DataManager
+    @State private var showAlert = false // used to display error loggin in warnings to user
+    @State private var alertMessage = "" // content in the alert message
     
     var body: some View {
         if dataManager.userIsLoggedIn {
@@ -96,7 +98,11 @@ struct SignInView: View {
                     }.padding(.top)
                     Spacer()
                     
-                }.frame(width: 350)
+                }
+                    .frame(width: 350)
+                    .alert(isPresented: $showAlert) {
+                                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                            }
                     .onAppear() {
                         Auth.auth().addStateDidChangeListener { auth, user in
                             if user != nil {
@@ -110,8 +116,10 @@ struct SignInView: View {
 
     func logIn() {
         Auth.auth().signIn(withEmail:email, password:password) { result, error in
-            if error != nil {
-                print(error!.localizedDescription) // creates new user
+            if let error = error {
+                print(error.localizedDescription)
+                self.alertMessage = error.localizedDescription
+                self.showAlert = true
             }
         }
     }

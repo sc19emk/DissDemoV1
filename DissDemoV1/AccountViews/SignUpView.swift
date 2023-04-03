@@ -12,21 +12,23 @@
 //  Created by Emily Kerkhof on 17/03/2023.
 //
 
-// ADD TERMS AND CONDITIONS
-// add user alert when sign up fails
-// duplicate text when compiled on iphone, reenter password and password 2
-
 import SwiftUI
 import Firebase
 
 struct SignUpView: View {
+    // State variables to store input and control alerts
     @State private var username = ""
     @State private var email = ""
     @State private var phoneNumber = "" // convert to Int later
     @State private var password = ""
     @State private var password2 = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var agreedToTerms = false
+    @State private var showTermsAlert = false
     @EnvironmentObject var dataManager: DataManager
     
+    // show home view when the user signs up
     var body: some View {
         if dataManager.userIsLoggedIn {
             HomeView()
@@ -40,68 +42,58 @@ struct SignUpView: View {
         VStack {
             // groups as went over 10 items (max 10 items per object)
             Group {
+                // username text field and rectangle to underline
                 TextField("Username", text: $username)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: username.isEmpty) {
-                        Text("Username")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
+                    .padding(.top)
+                    .bold()
+                    .italic()
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
+                // email entry - must be correctly formatted
                 TextField("Email", text: $email)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: email.isEmpty) {
-                        Text("Email")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
+                    .padding(.top)
+                    .bold()
+                    .italic()
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
+                // phone number entry
                 TextField("Phone Number", text: $phoneNumber)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: phoneNumber.isEmpty) {
-                        Text("Phone Number")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
+                    .padding(.top)
+                    .bold()
+                    .italic()
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
             }
             Group {
+                // password entry - must be secure and meet criteria below
                 SecureField("Password", text:$password)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: password.isEmpty) {
-                        Text("Password")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
+                    .padding(.top)
+                    .bold()
+                    .italic()
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
-                SecureField("Password2", text:$password2)
+                // check passwords match
+                SecureField("Re-enter Password", text:$password2)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: password.isEmpty) {
-                        Text("Re-enter Password")
-                            .foregroundColor(.white)
-                            .bold()
-                            .italic()
-                    }.padding(.top)
+                    .padding(.top)
+                    .bold()
+                    .italic()
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
@@ -114,6 +106,7 @@ struct SignUpView: View {
     var signUpContent: some View {
         NavigationView {
             ZStack {
+                // Background color and decoration
                 Color.black
                 RoundedRectangle(cornerRadius: 0, style: .continuous)
                     .foregroundStyle(.linearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -122,14 +115,40 @@ struct SignUpView: View {
                     .offset(x:-100,y: -350)
                 
                 VStack(spacing: 20) {
-                    Spacer()
-                    Spacer()
+                    Group {
+                        Spacer()
+                        Spacer()
+                    }
                     Text("Sign Up")
                         .foregroundColor(.white)
                         .font(.system(size:50, weight: .bold, design: .rounded))
                     Spacer()
                     signUpForm
                     Spacer()
+                    HStack {
+                        // Checkbox
+                        Button(action: {
+                            agreedToTerms.toggle()
+                        }) {
+                            Image(systemName: agreedToTerms ? "checkmark.square" : "square")
+                                .foregroundColor(.white)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        // Terms and Conditions link
+                        Text("I agree to the")
+                            .foregroundColor(.white)
+                        
+                        Button(action: {
+                            alertMessage = "This app will store the provided data, and any location data you chose to share."
+                            showAlert = true
+                        }) {
+                            Text("Terms and Conditions")
+                                .foregroundColor(.white)
+                                .underline()
+                        }
+                    }
+                    // register button
                     Button {
                         signUp()
                     } label: {
@@ -142,7 +161,7 @@ struct SignUpView: View {
                             .foregroundColor(.white)
                     }
                     Spacer()
-                    
+                    // link back to sign in page
                     NavigationLink {
                         SignInView()
                     } label: {
@@ -156,6 +175,7 @@ struct SignUpView: View {
                     Spacer()
                     
                 }.frame(width: 350)
+                    .alert(isPresented: $showAlert) {Alert(title: Text(alertMessage.contains("This app will") ? "Terms and Conditions" : "Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))}
                     .onAppear() {
                         Auth.auth().addStateDidChangeListener { auth, user in
                             if user != nil {
@@ -169,15 +189,18 @@ struct SignUpView: View {
     // adds email and password into auth - need to send other details into other table
     func signUp() {
         let error = validate() // check fields
-        if error != nil {
-            // need to alert user why there is an error...
-            print(error!)
+        if let error = error {
+            print(error) // print to terminal
+            self.alertMessage = error // set alert message to this error
+            self.showAlert = true // and show the alert
         }
         else {
             Auth.auth().createUser(withEmail:email, password: password) { result, error2 in
                 // if there is an error creating the user account
-                if error2 != nil {
-                    print(error2!.localizedDescription)
+                if let error2 = error2 {
+                    print(error2.localizedDescription)
+                    self.alertMessage = error2.localizedDescription
+                    self.showAlert = true
                 }
                 else {
                     let db = Firestore.firestore()
@@ -207,18 +230,24 @@ struct SignUpView: View {
         }
         // do passwords match
         if password != password2 {
-            return "Passwords do not match"
+            return "The entered passwords do not match"
         }
         // is password secure enough
-//        if isPasswordValid(password) == false {
-//            return "Password must be 8 characters, contains a number and a special character"
-//        }
+        if isPasswordValid(password) == false {
+            return "Password must be 8 characters, contains a number and a special character"
+        }
+        
+        // Check if the user agreed to terms and conditions
+        if !agreedToTerms {
+            return "You must agree to our terms and conditions to sign up"
+        }
         return nil
     }
-//    func isPasswordValid(_ password: String) -> Bool {
-//        let passwordTest = NSPredicate(format: "SELF MATCHES %@","^(?=.*[a-z])(?=.*[$@$#!%*?&]) [A-Za-z\\d$@$#!%*?&]{8,}")
-//        return passwordTest.evaluate (with: password)
-//    }
+    func isPasswordValid(_ password: String) -> Bool {
+        // one lowercase letter: (?=.*[a-z]), one digit: (?=.*\\d), one special character: (?=.*[$@$#!%*?&]), minimum length of 8 characters: [A-Za-z\\d$@$#!%*?&]{8,}
+        let passwordTest = NSPredicate(format: "SELF MATCHES %@", "^(?=.*[a-z])(?=.*\\d)(?=.*[$@$#!%*?&])[A-Za-z\\d$@$#!%*?&]{8,}")
+        return passwordTest.evaluate(with: password)
+    }
 }
     
 
