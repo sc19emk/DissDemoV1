@@ -11,12 +11,14 @@ import UIKit
 
 // User Interface Code
 struct HomeView: View {
+    @EnvironmentObject var dataManager: DataManager // to access current user details
+    
     var viewSelected: String = ""
-    let emergencyString = "999"
     private let pages: [[String]] = [["Friends","person.2.fill"],["Account","person.text.rectangle"],["Map","location.square"],["Advice","character.book.closed.fill"],["Voice Box","speaker.wave.2.bubble.left.fill"],["Countdown","timer.square"],["Alarm","light.beacon.max"],["Quick Dial","phone.bubble.left.fill"]] // titles and related images
     private let colours: [Color] = [.white, .green, .gray, .blue, .yellow, .orange]
     @State var colourCount = 0
     private let columns = [GridItem(.flexible()), GridItem(.flexible())] // grid item columns, adaptive works in landscape too
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -30,17 +32,13 @@ struct HomeView: View {
                     ForEach(pages, id: \.self) { page in
                         
                         ZStack {
-//                            Rectangle()
-//                                .foregroundColor(Color.white)
-//                                .frame(width: 170, height: 170)
-//                                .cornerRadius(30)
-//                                .border(Color.gray, width: /*@START_MENU_TOKEN@*/5/*@END_MENU_TOKEN@*/)
-                            
+
                             if "\(page[0])" == "Quick Dial" {
                                 // link to quick dial (stays on page)
                                 Button(action: {
                                     let telephone = "tel://"
-                                    let formattedString = telephone + emergencyString
+                                    let emergencyNumber = dataManager.account.emergencyNumber
+                                    let formattedString = telephone + emergencyNumber
                                     guard let url = URL(string: formattedString) else { return }
                                     UIApplication.shared.open(url)
                                     }) { VStack {

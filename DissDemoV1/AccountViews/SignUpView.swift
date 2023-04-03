@@ -184,6 +184,7 @@ struct SignUpView: View {
                     db.collection("users").document(result!.user.uid).setData([
                         "username": username,
                         "number": phoneNumber,
+                        "emergencyNumber": "999", // 999 as default - can change in settings
                         "UID": result!.user.uid
                     ]) { error3 in
                         if let error3 = error3 {

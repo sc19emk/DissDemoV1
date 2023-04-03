@@ -13,9 +13,10 @@ struct Account: Identifiable {
     var email: String //email
     var username: String //username
     var number: String //phoneNumber
+    var emergencyNumber: String // user's emergency contact number
 }
 
-// the details of each of the current user's friends
+// the details of each of the current user's friends - not access personal emergency num details 
 struct Friend: Identifiable {
     var id: String // uid
     var username: String // username
@@ -24,7 +25,7 @@ struct Friend: Identifiable {
 
 class DataManager: ObservableObject {
     @Published var friends: [Friend] = []
-    @Published var account: Account = Account(id:"", email:"", username:"", number:"")
+    @Published var account: Account = Account(id:"", email:"", username:"", number:"", emergencyNumber: "")
     @Published var userIsLoggedIn =  false
     @Published var currentUser =  ""
     
@@ -49,7 +50,8 @@ class DataManager: ObservableObject {
                     if currentid == id {
                         let username = data["username"] as? String ?? "x"
                         let number = data["number"] as? String ?? "x"
-                        let currentUser = Account(id:id, email:email, username:username, number:number)
+                        let emergencyNumber = data["emergencyNumber"] as? String ?? "x"
+                        let currentUser = Account(id:id, email:email, username:username, number:number, emergencyNumber:emergencyNumber)
                         self.account = currentUser
                         self.fetchFriends() // Call fetchFriends after setting the account property
                     }
@@ -112,6 +114,7 @@ func fetchFriends() {
         }
     }
     
+    // does not access emergency number information
     func fetchFriendDetails(friendID: String) {
         print("fetching friend details for \(friendID)")
         db.collection("users").document(friendID).getDocument { snapshot, error in
@@ -219,13 +222,80 @@ func fetchFriends() {
             self.fetchFriends() // Update friends list after deleting the friend
         }
     }
-
     
     func signOut() {
         try! Auth.auth().signOut()
         currentUser = ""
         userIsLoggedIn = false
     }
+    
+    func deleteAccount() {
+        guard let user = Auth.auth().currentUser else {
+            print("Error: current user is nil") // check the user is actually logged in again...
+            return
+        }
+        
+        let userId = user.uid
+        
+        // Delete friendships
+        let ref = db.collection("friends")
+        let query1 = ref.whereField("friend1", isEqualTo: userId)
+        let query2 = ref.whereField("friend2", isEqualTo: userId)
+
+        let dispatchGroup = DispatchGroup()
+
+        // Delete friendships where friend1 == userId
+        dispatchGroup.enter()
+        query1.getDocuments { snapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            if let snapshot = snapshot {
+                for document in snapshot.documents {
+                    document.reference.delete()
+                }
+            }
+            dispatchGroup.leave()
+        }
+
+        // Delete friendships where friend2 == userId
+        dispatchGroup.enter()
+        query2.getDocuments { snapshot, error in
+            guard error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            if let snapshot = snapshot {
+                for document in snapshot.documents {
+                    document.reference.delete()
+                }
+            }
+            dispatchGroup.leave()
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            // Delete user data
+            self.db.collection("users").document(userId).delete { error in
+                if let error = error {
+                    print("Error removing document: \(error)")
+                } else {
+                    print("Document successfully removed!")
+                    
+                    // Delete Auth data
+                    user.delete(completion: { error in
+                        if let error = error {
+                            print("Error deleting user: \(error)")
+                        } else {
+                            print("User successfully deleted")
+                            self.signOut()
+                        }
+                    })
+                }
+            }
+        }
+    }
+
     
     init() {
         Auth.auth().addStateDidChangeListener { auth, user in
