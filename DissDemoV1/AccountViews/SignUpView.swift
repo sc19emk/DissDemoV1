@@ -14,6 +14,7 @@
 
 // ADD TERMS AND CONDITIONS
 // add user alert when sign up fails
+// duplicate text when compiled on iphone, reenter password and password 2
 
 import SwiftUI
 import Firebase
@@ -24,10 +25,10 @@ struct SignUpView: View {
     @State private var phoneNumber = "" // convert to Int later
     @State private var password = ""
     @State private var password2 = ""
-    @State private var userIsLoggedIn =  false
+    @EnvironmentObject var dataManager: DataManager
     
     var body: some View {
-        if userIsLoggedIn {
+        if dataManager.userIsLoggedIn {
             HomeView()
         }
         else {
@@ -158,7 +159,7 @@ struct SignUpView: View {
                     .onAppear() {
                         Auth.auth().addStateDidChangeListener { auth, user in
                             if user != nil {
-                                userIsLoggedIn = true
+                                dataManager.userIsLoggedIn = true
                             }
                         }
                     }
@@ -174,29 +175,29 @@ struct SignUpView: View {
         }
         else {
             Auth.auth().createUser(withEmail:email, password: password) { result, error2 in
-            // if there is an error creating the user account
+                // if there is an error creating the user account
                 if error2 != nil {
                     print(error2!.localizedDescription)
                 }
                 else {
                     let db = Firestore.firestore()
-                    //var ref: DocumentReference? = result!.user.uid
-                    db.collection("users").addDocument(data: [
-                        "username":username,
-                        "number":phoneNumber,
-                        "UID":result!.user.uid
-                    ]) {error3 in
+                    db.collection("users").document(result!.user.uid).setData([
+                        "username": username,
+                        "number": phoneNumber,
+                        "UID": result!.user.uid
+                    ]) { error3 in
                         if let error3 = error3 {
                             print("Error adding document: \(error3)")
                         }
                         else {
-                            print ("Document added with ID: ")
+                            print ("Document added with ID: \(result!.user.uid)")
                         }
                     }
                 }
             }
         }
     }
+
     // returns error message if incorrect
     func validate() -> String? {
         // are fields filled in
@@ -211,8 +212,6 @@ struct SignUpView: View {
 //        if isPasswordValid(password) == false {
 //            return "Password must be 8 characters, contains a number and a special character"
 //        }
-        
-        
         return nil
     }
 //    func isPasswordValid(_ password: String) -> Bool {
@@ -224,6 +223,6 @@ struct SignUpView: View {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
+        SignUpView().environmentObject(DataManager())
     }
 }

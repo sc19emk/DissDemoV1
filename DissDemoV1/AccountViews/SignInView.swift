@@ -13,10 +13,10 @@ import Firebase
 struct SignInView: View {
     @State private var email = ""
     @State private var password = ""
-    @State private var userIsLoggedIn =  false
+    @EnvironmentObject var dataManager: DataManager
     
     var body: some View {
-        if userIsLoggedIn {
+        if dataManager.userIsLoggedIn {
             HomeView()
         }
         else {
@@ -100,7 +100,7 @@ struct SignInView: View {
                     .onAppear() {
                         Auth.auth().addStateDidChangeListener { auth, user in
                             if user != nil {
-                                userIsLoggedIn = true
+                                dataManager.userIsLoggedIn
                             }
                         }
                     }
@@ -119,7 +119,7 @@ struct SignInView: View {
 
 struct LogInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView()
+        SignInView().environmentObject(DataManager())
     }
 }
 

@@ -3,7 +3,7 @@
 //  DissDemoV1
 //
 //  Created by Emily Kerkhof on 03/02/2023.
-//
+// update to allow users to change details, and set emergency contact number
 
 import SwiftUI
 import Firebase
@@ -23,8 +23,8 @@ struct SettingsView: View {
                 Text("Username: \(username) ")
                 Text("Email: \(email) ")
                 Text("Contact Number: \(number) ")
-                NavigationLink {
-                    SignInView()
+                Button {
+                    dataManager.signOut()
                 } label: {
                     Text("Sign Out")
                 }
@@ -32,12 +32,6 @@ struct SettingsView: View {
             }
         }//.navigationBarBackButtonHidden(true)
     }
-    
-//    func signOut() {
-//        try! Auth.auth().signOut()
-//        dataManager.currentUser = ""
-//        dataManager.userIsLoggedIn = false
-//    }
 }
 
 // used for creating the canvas
