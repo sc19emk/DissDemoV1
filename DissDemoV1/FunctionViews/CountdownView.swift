@@ -7,11 +7,26 @@
 
 import SwiftUI // for view and other structures
 import AVFoundation // to play sound files
+import FirebaseFirestore
 
+
+struct ContentView: View {
+    @StateObject var dataManager = DataManager()
+
+    var body: some View {
+        CountdownView(dataManager: dataManager)
+    }
+}
 
 struct CountdownView: View {
-    @StateObject var timerModel = TimerModel() // creating an instance of the timer model object
-    @State var currentTime = Date.now
+    @ObservedObject var dataManager: DataManager
+    @StateObject var timerModel: TimerModel
+
+    // Initialize TimerModel with dataManager
+    init(dataManager: DataManager) {
+        self.dataManager = dataManager
+        self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
+    }
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // connecting to built in Timer class, using phones clock
     let dateFormatter: DateFormatter = {
@@ -38,13 +53,6 @@ struct CountdownView: View {
                     VStack {
                         Text ("\(timerModel.time)") //displays current countdowns's time set/remaining
                             .font(.system(size:70, weight: .medium, design: .monospaced)) // customising font
-                        
-                        // Slider currently disabled as cannot update to max time value correctly
-//                        Slider(value: $timerModel.minutes, in: 0...maxValue) // creating the slider, in=range, step=interval
-//                            .padding()
-//                            .disabled(timerModel.running) // if timer is running, cannot access slider
-//                            .tint(.red) // need to change for night appearence
-                        
                     }
                 }
                 else{
@@ -93,8 +101,12 @@ struct CountdownView: View {
 
 // creating the timer object
 extension CountdownView {
-    
     class TimerModel: ObservableObject {
+        var dataManager: DataManager
+        init(dataManager: DataManager) {
+            self.dataManager = dataManager
+        }
+
         var running = false // is timer running
         var alert = false // is timer showing alert / ended
         var startTime = 0
@@ -123,6 +135,7 @@ extension CountdownView {
                 self.time = "0:00" // set to 0 time remaining
                 self.alert = true // show alert
                 self.playSound() // plays alarm from SOS
+                sendAlertToFriends(dataManager: dataManager)
                 return // ends countdown
             }
             
@@ -134,15 +147,6 @@ extension CountdownView {
             if duration < 3600.0 {
                 //print(seconds)
                 self.time = String(format: "%d:%02d", minutes, seconds) // display remaining time...
-                // below not formatting correctly
-//                if seconds < 10 {
-//                    print("less than 10")
-//                    self.time = String(format: "%d:0%02d", minutes, seconds) // display remaining time...
-//                }
-//                else {
-//                    print("more than 10")
-//                    self.time = String(format: "%d:%02d", minutes, seconds) // add a 0 to seconds display
-//                }
                 
             }
             // if more than an hour remains
@@ -194,6 +198,33 @@ extension CountdownView {
         func secondsToHoursMinutesSeconds(_ seconds: Int) -> (Int, Int, Int) {
             return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
         }
+        func sendAlertToFriends(dataManager: DataManager) {
+            let uidFrom = dataManager.account.id
+            let type = 3
+            let contents = "Your friend's countdown has just finished and sounded an alarm. Please check on them."
+
+            for friend in dataManager.friends {
+                let uidTo = friend.id
+
+                let ref = Firestore.firestore().collection("notifications")
+                let data: [String: Any] = [
+                    "uidFrom": uidFrom,
+                    "uidTo": uidTo,
+                    "type": type,
+                    "opened": false,
+                    "contents": contents,
+                    "timestamp": Timestamp()
+                ]
+
+                ref.addDocument(data: data) { error in
+                    if let error = error {
+                        print("Error sending notification: \(error.localizedDescription)")
+                    } else {
+                        print("Notification sent to friend: \(uidTo)")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -223,8 +254,8 @@ struct TimePicker: View  {
 
 
 
-struct CountdownView_Previews: PreviewProvider {
-    static var previews: some View {
-        CountdownView()
-    }
-}
+//struct CountdownView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CountdownView(dataManager: DataManager)
+//    }
+//}

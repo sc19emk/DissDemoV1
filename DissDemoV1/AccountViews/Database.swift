@@ -28,6 +28,8 @@ class DataManager: ObservableObject {
     @Published var account: Account = Account(id:"", email:"", username:"", number:"", emergencyNumber: "")
     @Published var userIsLoggedIn =  false
     @Published var currentUser =  ""
+    @Published var lat: Double = 0 // used for sharing location
+    @Published var long: Double = 0 // used for sharing location
     
     let db = Firestore.firestore() // setting up the database
     
@@ -81,7 +83,6 @@ func fetchFriends() {
             if let snapshot = snapshot {
                 for document in snapshot.documents {
                     let data = document.data()
-                    print("found Document - adding!!! \(data)")
                     if let friend2ID = data["friend2"] as? String {
                         self.fetchFriendDetails(friendID: friend2ID)
                     }
@@ -129,6 +130,28 @@ func fetchFriends() {
                 let number = data["number"] as? String ?? "x"
                 let friend = Friend(id: friendID, username: username, number: number)
                 self.friends.append(friend)
+            }
+        }
+    }
+    
+    // just returns username - for notifications
+    func fetchFriendUsername(friendID: String, completion: @escaping (String?) -> Void) {
+        print("fetching username for \(friendID)")
+        db.collection("users").document(friendID).getDocument { snapshot, error in
+            guard error == nil
+            else {
+                print(error!.localizedDescription)
+                completion(nil)
+                return
+            }
+            if let snapshot = snapshot, let data = snapshot.data() {
+                let username = data["username"] as? String ?? "x"
+                completion(username)
+                print("Success \(username)")
+            }
+            else {
+                completion(nil)
+                print("fail")
             }
         }
     }

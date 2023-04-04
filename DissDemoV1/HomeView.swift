@@ -14,7 +14,7 @@ struct HomeView: View {
     @EnvironmentObject var dataManager: DataManager // to access current user details
     
     var viewSelected: String = ""
-    private let pages: [[String]] = [["Friends","person.2.fill"],["Account","person.text.rectangle"],["Map","location.square"],["Advice","character.book.closed.fill"],["Voice Box","speaker.wave.2.bubble.left.fill"],["Countdown","timer.square"],["Alarm","light.beacon.max"],["Quick Dial","phone.bubble.left.fill"]] // titles and related images
+    private let pages: [[String]] = [["Friends","person.2.fill"],["Account","person.text.rectangle"],["Map","location.square"],["Advice","character.book.closed.fill"],["Voice Box","speaker.wave.2.bubble.left.fill"],["Countdown","timer.square"],["Alarm","light.beacon.max"],["Quick Dial","phone.bubble.left.fill"],["Notification","phone.bubble.left.fill"]] // titles and related images
     private let colours: [Color] = [.white, .green, .gray, .blue, .yellow, .orange]
     @State var colourCount = 0
     private let columns = [GridItem(.flexible()), GridItem(.flexible())] // grid item columns, adaptive works in landscape too
@@ -101,13 +101,14 @@ struct HomeView: View {
             return AnyView(VoiceBoxView())
         }
         if viewSelected == "Countdown" {
-            return AnyView(CountdownView())
+            return AnyView(CountdownView(dataManager: dataManager))
         }
         if viewSelected == "Alarm" {
             return AnyView(AlarmView())
         }
-        if viewSelected == "Quick Dial" {
-            return AnyView(CountdownView())
+
+        if viewSelected == "Notification" {
+            return AnyView(NotificationView())
         }
         else {
             return AnyView(SettingsView())

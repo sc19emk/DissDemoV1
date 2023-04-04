@@ -91,6 +91,7 @@ struct AddFriendView: View {
                     
                     Button(action: {
                         dataManager.addFriend(friendID: user.id)
+                        sendAlertToFriend(friendID: user.id)
                     }) {
                         Text("Add Friend")
                             .foregroundColor(.white)
@@ -102,6 +103,30 @@ struct AddFriendView: View {
             }
         }.padding()
         .navigationTitle("Add Friend")
+    }
+    
+    func sendAlertToFriend(friendID: String) {
+        let uidFrom = dataManager.account.id
+        let type = 4
+        let contents = "You have been added as a friend."
+        let uidTo = friendID
+        let ref = Firestore.firestore().collection("notifications")
+        let data: [String: Any] = [
+            "uidFrom": uidFrom,
+            "uidTo": uidTo,
+            "type": type,
+            "opened": false,
+            "contents": contents,
+            "timestamp": Timestamp()
+        ]
+
+        ref.addDocument(data: data) { error in
+            if let error = error {
+                print("Error sending notification: \(error.localizedDescription)")
+            } else {
+                print("Notification sent to friend: \(uidTo)")
+            }
+        }
     }
 }
 

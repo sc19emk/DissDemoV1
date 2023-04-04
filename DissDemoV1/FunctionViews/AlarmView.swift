@@ -13,10 +13,12 @@ import SwiftUI
 import Foundation
 import AVFoundation // library for playing sound effects
 import UIKit
+import FirebaseFirestore
 
 var audioPlayer = AVAudioPlayer() // variable for sound effect
 
 struct AlarmView: View {
+    @EnvironmentObject var dataManager: DataManager // to alert friends about SOS trigger
     @State var playing = false // is alarm currently playing
     let emergencyString = "999" // for quick dial
     var body: some View {
@@ -40,7 +42,9 @@ struct AlarmView: View {
                     if playing==false {
                         Button("Play Alarm!") {
                             playSound()
+                            sendAlertToFriends()
                             self.playing = true // changes button state
+                            
                         }.fixedSize()
                         .frame(width: 340, height: 220)
                         .background(.linearGradient(colors: [.pink, .red], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -103,6 +107,33 @@ struct AlarmView: View {
     func stopSound() {
         audioPlayer.stop()
     }
+    func sendAlertToFriends() {
+            let uidFrom = dataManager.account.id
+            let type = 1
+            let contents = "Your friend has sounded their SOS. Please check on them"
+
+            for friend in dataManager.friends {
+                let uidTo = friend.id
+
+                let ref = Firestore.firestore().collection("notifications")
+                let data: [String: Any] = [
+                    "uidFrom": uidFrom,
+                    "uidTo": uidTo,
+                    "type": type,
+                    "opened": false,
+                    "contents": contents,
+                    "timestamp": Timestamp()
+                ]
+
+                ref.addDocument(data: data) { error in
+                    if let error = error {
+                        print("Error sending notification: \(error.localizedDescription)")
+                    } else {
+                        print("Notification sent to friend: \(uidTo)")
+                    }
+                }
+            }
+        }
 }
 
 struct AlarmView_Previews: PreviewProvider {
