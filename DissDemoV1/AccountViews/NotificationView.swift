@@ -22,8 +22,6 @@ struct NotificationView: View {
                 ForEach(notifications.sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedDescending })) { notification in                    if selectedTab == 0 && notification.uidTo == dataManager.account.id {
                         NavigationLink(destination: DetailedNotificationView(notification: notification)) {
                             NotificationRow(notification: notification)
-                        }.onAppear {
-                            setNotificationOpened(notification)
                         }
                     } else if selectedTab == 1 && notification.uidFrom == dataManager.account.id {
                         NavigationLink(destination: DetailedNotificationView(notification: notification)) {
@@ -56,16 +54,13 @@ struct NotificationView: View {
 
                     return NotificationItem(id: id, uidFrom: uidFrom, uidTo: uidTo, type: type, opened: opened, contents: contents, timestamp: timestamp)
                 }
+                // Update the app icon badge number - currently not working
+                let unopenedCount = notifications.filter { !$0.opened && $0.uidTo == dataManager.account.id }.count
+                UIApplication.shared.applicationIconBadgeNumber = unopenedCount
             }
         }
     }
     
-    func setNotificationOpened(_ notification: NotificationItem) {
-        if !notification.opened {
-            let ref = Firestore.firestore().collection("notifications") // for user's unopened notifications
-            ref.document(notification.id).updateData(["opened": true])
-        }
-    }
     // formatting the date and time timestamp
     func formatDate(_ timestamp: Timestamp) -> String {
         let date = timestamp.dateValue()
@@ -151,6 +146,8 @@ struct DetailedNotificationView: View {
             } else {
                 Text(notification.contents)
             }
+        }.onAppear {
+            setNotificationOpened(notification)
         }
         .padding()
         .navigationBarTitle("Notification Details", displayMode: .inline)
@@ -207,6 +204,13 @@ struct DetailedNotificationView: View {
         }
         return nil
     }
+    func setNotificationOpened(_ notification: NotificationItem) {
+        if !notification.opened {
+            let ref = Firestore.firestore().collection("notifications") // for user's unopened notifications
+            ref.document(notification.id).updateData(["opened": true])
+        }
+    }
+    
 }
 
 struct NotificationItem: Identifiable {
