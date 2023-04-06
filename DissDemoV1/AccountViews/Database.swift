@@ -36,7 +36,7 @@ class DataManager: ObservableObject {
     func fetchAccount() {
         let user = Auth.auth().currentUser
         let id = user!.uid // getting current user id
-        let email = user!.email as? String ?? "x" // getting current user id
+        let email = user!.email ?? "x" // getting current user id
         let ref = db.collection("users")
         ref.getDocuments { snapshot, error in
             guard error == nil else {
@@ -156,39 +156,47 @@ func fetchFriends() {
         }
     }
     
-    func searchUser(query: String, completion: @escaping (Friend?) -> Void) {
+    func searchUser(query: String, completion: @escaping ([Friend]) -> Void) {
         let userRef = db.collection("users")
         print("Search taking place...")
         let dispatchGroup = DispatchGroup()
+        
+        var results: [Friend] = []
 
         // Search for user by email or username
         dispatchGroup.enter()
-        userRef.whereField("username", isEqualTo: query).getDocuments { snapshot, error in
-            print("Search for username: \(query)")
+        userRef.getDocuments { snapshot, error in
+            print("Search for query: \(query)")
             
             if let error = error {
                 print("Error searching for user: \(error)")
-                completion(nil)
+                completion([])
             } else if let snapshot = snapshot, !snapshot.isEmpty {
-                print("Found username !!! : \(query)")
-                let document = snapshot.documents.first!
-                let data = document.data()
-                let id = document.documentID // user id is document id
-                let username = data["username"] as? String ?? "x" // username searched for
-                let number = data["number"] as? String ?? "x" // phone number of account
+                let queryLowercased = query.lowercased()
                 
-                let user = Friend(id: id, username: username, number: number) // set as friend found
-                completion(user) // return the user found
-            } else {
-                completion(nil)
+                for document in snapshot.documents {
+                    let data = document.data()
+                    let id = document.documentID // user id is document id
+                    let username = data["username"] as? String ?? "x" // username searched for
+                    let number = data["number"] as? String ?? "x" // phone number of account
+                    
+                    let usernameLowercased = username.lowercased()
+                    
+                    if usernameLowercased.contains(queryLowercased) || queryLowercased.contains(usernameLowercased) {
+                        let user = Friend(id: id, username: username, number: number) // set as friend found
+                        results.append(user)
+                    }
+                }
             }
             dispatchGroup.leave()
         }
-
+        
         dispatchGroup.notify(queue: .main) {
             print("Finished searching for user")
+            completion(results)
         }
     }
+
 
     func addFriend(friendID: String) {
         let ref = db.collection("friends")

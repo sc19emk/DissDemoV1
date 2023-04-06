@@ -48,12 +48,7 @@ struct SignInView: View {
                         TextField("Email", text: $email)
                             .foregroundColor(.white)
                             .textFieldStyle(.plain)
-                            .placeholder(when: email.isEmpty) {
-                                Text("Email")
-                                    .foregroundColor(.white)
-                                    .bold()
-                                    .italic()
-                            }.padding(.top)
+                            .padding(.top)
                         
                         Rectangle()
                             .frame(width:350,height: 1)
@@ -62,12 +57,6 @@ struct SignInView: View {
                         SecureField("Password", text:$password)
                             .foregroundColor(.white)
                             .textFieldStyle(.plain)
-                            .placeholder(when: password.isEmpty) {
-                                Text("Password")
-                                    .foregroundColor(.white)
-                                    .bold()
-                                    .italic()
-                            }
                         
                         Rectangle()
                             .frame(width:350,height: 1)
@@ -105,9 +94,6 @@ struct SignInView: View {
                             }
                     .onAppear() {
                         Auth.auth().addStateDidChangeListener { auth, user in
-                            if user != nil {
-                                dataManager.userIsLoggedIn
-                            }
                         }
                     }
             }.ignoresSafeArea()

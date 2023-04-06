@@ -13,22 +13,39 @@ import Firebase
 // Friend Page Code
 struct FriendView: View {
     @EnvironmentObject var dataManager: DataManager
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     
     var body: some View {
         NavigationView {
             VStack {
+                HStack {
+                    Image(systemName: "person.2")
+                        .font(.system(size: 30))
+                        .foregroundColor(Color.purple)
+                    Text("Friends")
+                        .font(.system(size: 30, design: .monospaced))
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                }
+                
                 List(dataManager.friends, id: \.id) { friend in
                     NavigationLink(destination: FriendDetailsView(friend: friend)) {
                         Text(friend.username)
+                            .bold()
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        
                     }
-                }.navigationTitle("Contacts")
+                }
                 
                 NavigationLink(destination: AddFriendView()) {
                     Text("Add Friend")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.08) )
                         .cornerRadius(10)
+                    
                 }.padding()
             }
         }
@@ -38,20 +55,39 @@ struct FriendView: View {
 // Friend Details Page
 struct FriendDetailsView: View {
     @EnvironmentObject var dataManager: DataManager // for accessing deleting the current friend
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
+
     var friend: Friend
     
     var body: some View {
         VStack {
-            Text("Username: \(friend.username)")
-            Text("Phone number: \(friend.number)")
+            HStack {
+                Text("Username: ")
+                    .bold()
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                Text("\(friend.username)")
+                    .bold()
+                    .foregroundColor(Color.purple) // change text color based on the color scheme
+            }
+            
+            HStack {
+                Text("Phone Number: ")
+                    .bold()
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                Text("\(friend.number)")
+                    .bold()
+                    .foregroundColor(Color.purple) // change text color based on the color scheme
+            }
             Button(
                 action: {
                     dataManager.deleteFriend(friendID: friend.id)
                 }) {
                 Text("Remove Friend")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.red)
+                    .bold()
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                    .padding(.vertical)
+                    .frame(maxWidth: .infinity)
+                    .background(colorScheme == .dark ? Color.red.opacity(0.8) :  Color.red.opacity(0.08) )
                     .cornerRadius(10)
             }
         }.padding()
@@ -59,11 +95,13 @@ struct FriendDetailsView: View {
     }
 }
 
+
 // for adding new friends
 struct AddFriendView: View {
     @EnvironmentObject var dataManager: DataManager
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State private var searchText = ""
-    @State private var foundUser: Friend? = nil
+    @State private var foundUsers: [Friend] = []
     
     var body: some View {
         VStack {
@@ -73,33 +111,38 @@ struct AddFriendView: View {
                 .cornerRadius(10)
             
             Button(action: {
-                dataManager.searchUser(query: searchText, completion: { user in
-                    foundUser = user
+                dataManager.searchUser(query: searchText, completion: { users in
+                    foundUsers = users
                 })
             }) {
                 Text("Search")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
+                    .bold()
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                    .padding(.vertical)
+                    .frame(maxWidth: .infinity)
+                    .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.08) )
                     .cornerRadius(10)
             }
             
-            if let user = foundUser {
-                VStack {
-                    Text("Username: \(user.username)")
-                    Text("Number: \(user.number)")
-                    
-                    Button(action: {
+            if foundUsers.count > 0 {
+                List(foundUsers, id: \.id) { user in
+                    VStack(alignment: .leading) {
+                        Text(user.username)
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        Text(user.number)
+                            .font(.subheadline)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                    }.scrollContentBackground(.hidden) // removes background colour from scroll
+                        .foregroundColor(.white)
+                    .onTapGesture {
                         dataManager.addFriend(friendID: user.id)
                         sendAlertToFriend(friendID: user.id)
-                    }) {
-                        Text("Add Friend")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.green)
-                            .cornerRadius(10)
                     }
                 }.padding()
+            } else {
+                Text("No results found")
+                    .padding()
             }
         }.padding()
         .navigationTitle("Add Friend")
@@ -129,6 +172,7 @@ struct AddFriendView: View {
         }
     }
 }
+
 
 
 

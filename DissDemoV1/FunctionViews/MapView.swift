@@ -15,6 +15,7 @@ enum defaultValues {
 }
 
 struct MapView: View {
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @StateObject var map = MapModel()
     @EnvironmentObject var dataManager: DataManager
     @State private var sharing = false
@@ -37,13 +38,13 @@ struct MapView: View {
                     shareLocation()
                 } label: {
                     Text("Share Location")
-                }.frame(width: 150, height: 50)
-                    .background(.linearGradient(colors: [.green, .yellow], startPoint: .top, endPoint: .bottomTrailing))
-                    .overlay(RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 4))
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        .bold()
+                }.bold()
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
                     .padding()
-                    .accentColor(.black)
-                    .fontWeight(.bold)
+                    .background(colorScheme == .dark ? Color.green.opacity(0.8) :  Color.green.opacity(0.8) )
+                    .cornerRadius(10)
 
                 if sharing {
                     Text("Lat: \(coordinates.lat)")

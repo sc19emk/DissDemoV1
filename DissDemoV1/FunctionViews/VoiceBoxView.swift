@@ -3,7 +3,7 @@
 //  DissDemoV1
 //
 //  Created by Emily Kerkhof on 05/02/2023.
-//  Navigation bars stacking ;<
+//  doesnt pause when you go off screen
 
 import SwiftUI
 import Foundation
@@ -11,43 +11,62 @@ import AVFoundation // library for playing sound effects
 import UIKit
 
 struct VoiceBoxView: View {
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     var body: some View {
         NavigationStack{
             ZStack {
-                Color.black.ignoresSafeArea()
-                
-                RoundedRectangle(cornerRadius: 0, style: .continuous)
-                    .foregroundStyle(.linearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 650, height: 400)
-                    .rotationEffect(.degrees(-10))
-                    .offset(y: -620)
                 
                 VStack {
-                    Text("Vocie Box").font(.title).bold().offset(y: -160)
-                    Text("Pre-recorded phrases soundboard with a male voice")
-                        .multilineTextAlignment(.center)
+                    HStack {
+                        Image(systemName: "waveform.circle")
+                            .font(.system(size: 30))
+                            .foregroundColor(Color.yellow)
+                        Text("Voice Box")
+                            .font(.system(size: 30, design: .monospaced))
+                            .bold()
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                    }
                     Spacer()
-                    NavigationLink {
-                        TranscriptView(convoChoice: 1)
-                    } label: {
-                        Text("1: SHORT - BOYFRIEND")
-                    }.simultaneousGesture(TapGesture().onEnded{
-                        playConvo(convoChoice: 1)
-                    })
-                    NavigationLink {
-                        TranscriptView(convoChoice: 2)
-                    } label: {
-                        Text("2: LONG - BOYFRIEND")
-                    }.simultaneousGesture(TapGesture().onEnded{
-                        playConvo(convoChoice: 2)
-                    })
-                    NavigationLink {
-                        TranscriptView(convoChoice: 3)
-                    } label: {
-                        Text("3: SHORT - FRIEND")
-                    }.simultaneousGesture(TapGesture().onEnded{
-                        playConvo(convoChoice: 3)
-                    })
+                    VStack (spacing: 100) {
+                        NavigationLink {
+                            TranscriptView(convoChoice: 1)
+                        } label: {
+                            Text("1: SHORT - BOYFRIEND")
+                                .bold()
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                        }.padding(.vertical)
+                            .frame(width: 300)
+                            .background(Color.yellow.opacity(0.6) )
+                            .cornerRadius(10)
+                            .simultaneousGesture(TapGesture().onEnded{
+                            playConvo(convoChoice: 1)
+                        })
+                        NavigationLink {
+                            TranscriptView(convoChoice: 2)
+                        } label: {
+                            Text("2: LONG - BOYFRIEND").bold()
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                        }.padding(.vertical)
+                            .frame(width: 300)
+                            .background(Color.yellow.opacity(0.6) )
+                            .cornerRadius(10)
+                            .simultaneousGesture(TapGesture().onEnded{
+                            playConvo(convoChoice: 2)
+                        })
+                        NavigationLink {
+                            TranscriptView(convoChoice: 3)
+                        } label: {
+                            Text("3: SHORT - FRIEND")
+                                .bold()
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                        }.padding(.vertical)
+                            .frame(width: 300)
+                            .background(Color.yellow.opacity(0.6) )
+                            .cornerRadius(10)
+                            .simultaneousGesture(TapGesture().onEnded{
+                            playConvo(convoChoice: 3)
+                        })
+                    }
                     
                     Spacer()
                 }
@@ -78,6 +97,7 @@ struct VoiceBoxView: View {
 
 
 struct TranscriptView: View {
+    @Environment(\.colorScheme) var colorScheme
     @State var playing = true
     var convoChoice: Int = 0 // set default to 10
     init(convoChoice: Int) {
@@ -89,27 +109,38 @@ struct TranscriptView: View {
             // minus one as the transcript array is 0 indexed
             // set the summary as the title
             Text(allTranscripts[convoChoice-1].summary)
-                .font(.title)
+                .font(.system(size: 30, design: .monospaced))
                 .bold()
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                .padding()
             // show the voice actor demographics
-            Text(allTranscripts[convoChoice-1].voiceActor)
-                .italic()
+            HStack {
+                Spacer()
+                Text(allTranscripts[convoChoice-1].voiceActor)
+                    .italic()
                 .foregroundColor(.gray)
+            }
+        
             Spacer()
             // Loop over conversation and disaply on screen
-            ForEach(0...allTranscripts[convoChoice-1].length-1, id: \.self) { line in
-                HStack{
-                    // seperating the male and female / you lines
-                    Text(allTranscripts[convoChoice-1].text[0][line])
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-                HStack{
-                    Spacer()
-                    Text(allTranscripts[convoChoice-1].text[1][line])
-                        .foregroundColor(Color.pink)
-                        .multilineTextAlignment(.trailing)
-                        .bold()
+            ScrollView {
+                ForEach(0...allTranscripts[convoChoice-1].length-1, id: \.self) { line in
+                    HStack{
+                        // seperating the male and female / you lines
+                        Text(allTranscripts[convoChoice-1].text[0][line])
+                            .foregroundColor(Color.gray)
+                            .multilineTextAlignment(.leading)
+                            .padding()
+                        Spacer()
+                    }
+                    HStack{
+                        Spacer()
+                        Text(allTranscripts[convoChoice-1].text[1][line])
+                            .foregroundColor(Color.yellow)
+                            .multilineTextAlignment(.trailing)
+                            .bold()
+                            
+                    }
                 }
             }
             Spacer()
@@ -118,14 +149,22 @@ struct TranscriptView: View {
                 Button("Pause Conversation") {
                     audioPlayer.pause()
                     self.playing = false // changes button state
-                }
-            }
-            // button to resume once paused
-            else if playing==false {
+                }.foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .padding(.vertical)
+                    .frame(width: 300)
+                    .background(Color.yellow.opacity(0.6) )
+                    .cornerRadius(10)
+                
+                // button to resume once paused
+            } else if playing==false {
                 Button("Resume Conversation") {
                     audioPlayer.play()
                     self.playing = true // changes button state
-                }
+                }.foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .padding(.vertical)
+                    .frame(width: 300)
+                    .background(Color.yellow.opacity(0.6) )
+                    .cornerRadius(10)
             }
         }
     }

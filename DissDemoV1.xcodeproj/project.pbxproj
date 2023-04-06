@@ -181,12 +181,14 @@
 			isa = PBXGroup;
 			children = (
 				6C206AFE298ABC5C00EE2A82 /* HomeView.swift */,
-				6CE629DF298FEF6F00386007 /* MapView.swift */,
+				6C0D6B3D298D3868008B38F0 /* SettingsView.swift */,
+				6CE629DD298FEEF900386007 /* FriendView.swift */,
+				6C2578FE29DC3B1C00ABD498 /* NotificationView.swift */,
 				6CB918AA29A8C98B00F0AAF2 /* AdviceView.swift */,
+				6CE629DF298FEF6F00386007 /* MapView.swift */,
 				6CE629E1298FF21B00386007 /* VoiceBoxView.swift */,
 				6CE629E3298FF25C00386007 /* CountdownView.swift */,
 				6CE629E7298FFB6100386007 /* AlarmView.swift */,
-				6CE629DD298FEEF900386007 /* FriendView.swift */,
 			);
 			path = FunctionViews;
 			sourceTree = "<group>";
@@ -196,8 +198,6 @@
 			children = (
 				6C7467B629C49DF80039F671 /* SignInView.swift */,
 				6C0D745729C8808700117D5D /* SignUpView.swift */,
-				6C2578FE29DC3B1C00ABD498 /* NotificationView.swift */,
-				6C0D6B3D298D3868008B38F0 /* SettingsView.swift */,
 				6C7467C129C4BC070039F671 /* Database.swift */,
 			);
 			path = AccountViews;

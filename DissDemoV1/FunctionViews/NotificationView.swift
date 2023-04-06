@@ -5,11 +5,21 @@ import MapKit // for location share notifications
 
 struct NotificationView: View {
     @EnvironmentObject var dataManager: DataManager // to access database
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State private var selectedTab = 0 // recieved or sent notifications
     @State private var notifications: [NotificationItem] = [] // holds notifaction list
 
     var body: some View {
         VStack {
+            HStack {
+                Image(systemName: "ellipsis.message")
+                    .font(.system(size: 30))
+                    .foregroundColor(Color.blue)
+                Text("Notifications")
+                    .font(.system(size: 30, design: .monospaced))
+                    .bold()
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            }
             // allows the user to move between tabs
             Picker(selection: $selectedTab, label: Text("Tabs")) {
                 Text("Received").tag(0)

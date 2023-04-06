@@ -7,7 +7,7 @@
 
 import SwiftUI // for view and other structures
 import AVFoundation // to play sound files
-import FirebaseFirestore
+import FirebaseFirestore // for storing countdown data
 
 
 struct ContentView: View {
@@ -21,28 +21,23 @@ struct ContentView: View {
 struct CountdownView: View {
     @ObservedObject var dataManager: DataManager
     @StateObject var timerModel: TimerModel
-
-    // Initialize TimerModel with dataManager
-    init(dataManager: DataManager) {
-        self.dataManager = dataManager
-        self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
-    }
-    
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
+    @State var selection: [String] = [0, 0].map { "\($0)" }
+    @State var data: [(String, [String])] = [
+            ("Hours", Array(0...12).map { "\($0)" }),
+            ("Minutes", Array(0...59).map { "\($0)" }),
+        ]
+    var maxValue: Float = 60.0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // connecting to built in Timer class, using phones clock
     let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
             return formatter
     }()
-    // test
-    @State var data: [(String, [String])] = [
-            ("Hours", Array(0...12).map { "\($0)" }),
-            ("Minutes", Array(0...59).map { "\($0)" }),
-        ]
-    
-    @State var selection: [String] = [0, 0].map { "\($0)" }
-    var maxValue :Float = 60.0 // CURRENTLY UNABLE TO CHANGE BAR LENGTH AFTER DECLERATION... WORK ON?
-
+    init(dataManager: DataManager) {
+        self.dataManager = dataManager
+        self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
+    }
     
     var body: some View {
         VStack {
@@ -57,6 +52,16 @@ struct CountdownView: View {
                 }
                 else{
                     VStack {
+                        HStack {
+                            Image(systemName: "timer.square")
+                                .font(.system(size: 30))
+                                .foregroundColor(Color.orange)
+                            Text("Countdown")
+                                .font(.system(size: 30, design: .monospaced))
+                                .bold()
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        }
+                        Spacer()
                         HStack {
                             Spacer()
                             Text("Hours").bold()
@@ -78,16 +83,20 @@ struct CountdownView: View {
             
             let timeSelected = (Float(selection[0])!)*60.0 + Float(selection[1])!
             
-            HStack(spacing: 50) {
+            VStack(spacing: 30) {
                 Button("Start") {
                     timerModel.start(minutes: timeSelected) // start countdown button
                 }   .disabled(timerModel.running)
-                    .tint(.black)
-                    .font(.title2)
+                    .padding()
+                    .frame(width: 300)
+                    .background(Color.orange.opacity(0.6))
+                    .cornerRadius(10)
                 Button ("Cancel", action: timerModel.cancel) // cancel countdown button
-                    .tint(.red)
                     .disabled(timerModel.running==false)
-                    .font(.title2)
+                    .padding()
+                    .frame(width: 300)
+                    .background(Color.gray.opacity(0.6))
+                    .cornerRadius(10)
             }
             
         }.onReceive(timer) { _ in
@@ -239,7 +248,7 @@ struct TimePicker: View  {
             HStack {
                 ForEach(0..<2) { column in
                     Picker(self.data[column].0, selection: self.$selection[column]) {
-                        ForEach(0..<Int(self.data[column].1.count)) { row in
+                        ForEach(0..<Int(self.data[column].1.count), id: \.self) { row in
                             Text(verbatim: self.data[column].1[row])
                             .tag(self.data[column].1[row])
                         }
@@ -252,10 +261,10 @@ struct TimePicker: View  {
     }
 }
 
-
-
+//
+//
 //struct CountdownView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        CountdownView(dataManager: DataManager)
+//        CountdownView().environmentObject(DataManager())
 //    }
 //}

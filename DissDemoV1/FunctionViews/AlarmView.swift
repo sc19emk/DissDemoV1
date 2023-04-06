@@ -19,50 +19,46 @@ var audioPlayer = AVAudioPlayer() // variable for sound effect
 
 struct AlarmView: View {
     @EnvironmentObject var dataManager: DataManager // to alert friends about SOS trigger
+    @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State var playing = false // is alarm currently playing
     let emergencyString = "999" // for quick dial
     var body: some View {
         NavigationStack {
-            
             ZStack{
-                Color.black.ignoresSafeArea()
-                
-                RoundedRectangle(cornerRadius: 0, style: .continuous)
-                    .foregroundStyle(.linearGradient(colors: [.red, .pink], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 650, height: 400)
-                    .rotationEffect(.degrees(-10))
-                    .offset(y: -620)
-                
                 VStack {
-                    
-                    Text("Alarm Page").font(.title).bold()
-                        .multilineTextAlignment(.center)
-                        .offset(y: -160)
+                    HStack {
+                        Image(systemName: "light.beacon.max")
+                            .font(.system(size: 30))
+                            .foregroundColor(Color.pink)
+                        Text("Alarm")
+                            .font(.system(size: 30, design: .monospaced))
+                            .bold()
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                    }
                     Spacer()
                     if playing==false {
                         Button("Play Alarm!") {
                             playSound()
                             sendAlertToFriends()
                             self.playing = true // changes button state
-                            
-                        }.fixedSize()
-                        .frame(width: 340, height: 220)
-                        .background(.linearGradient(colors: [.pink, .red], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .foregroundColor (.white)
-                        .accentColor(.pink)
+                    }.padding(.vertical)
+                        .frame(width: 300, height: 200)
+                        .background(colorScheme == .dark ? Color.pink.opacity(0.8) : Color.pink.opacity(0.7))
                         .cornerRadius(10)
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
                         
                     }
                     else {
                         Button("Stop Alarm") {
                             stopSound()
                             self.playing = false // changes button state
-                        }.fixedSize()
-                        .frame(width: 340, height: 220)
-                        .background(Color.blue)
-                        .foregroundColor (.white)
-                        .accentColor(.red)
-                        .cornerRadius(20)
+                        }.padding(.vertical)
+                            .frame(width: 300, height: 200)
+                            .background(colorScheme == .dark ? Color.gray.opacity(0.08) : Color.gray.opacity(0.8) )
+                            .cornerRadius(10)
+                            .bold()
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
                     }
                     Spacer()
                     
@@ -72,15 +68,14 @@ struct AlarmView: View {
                         guard let url = URL(string: formattedString) else { return }
                         UIApplication.shared.open(url)
                         }) {
-                            Image(systemName: "phone.connection.fill")
+                            Image(systemName: "phone.arrow.up.right")
                             Text("Quick Dial   ")
-                    }
-                        .fixedSize()
-                        .frame(width: 340, height: 100)
-                        .background(.linearGradient(colors: [.pink, .red], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .foregroundColor (.white)
-                        .accentColor(.red)
-                        .cornerRadius(20)
+                    }.padding(.vertical)
+                        .frame(width: 300)
+                        .background(colorScheme == .dark ? Color.pink.opacity(0.8) : Color.pink.opacity(0.7))
+                        .cornerRadius(10)
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
                 }
             }
         }
