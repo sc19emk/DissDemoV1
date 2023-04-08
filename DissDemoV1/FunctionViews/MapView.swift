@@ -17,23 +17,24 @@ enum defaultValues {
 struct MapView: View {
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @StateObject var map = MapModel()
-    @EnvironmentObject var dataManager: DataManager
-    @State private var sharing = false
-    @State private var showingFriendsList = false
-    @State private var selectedFriends: Set<String> = []
-    @State private var coordinates: (lat: Double, long: Double) = (0, 0)
+    @EnvironmentObject var dataManager: DataManager // for location data management
+    @State private var showingFriendsList = false // when the user shares - friends list is shown
+    @State private var selectedFriends: Set<String> = [] // all the chosen friends
+    @State private var coordinates: (lat: Double, long: Double) = (0, 0) // coordinate format
 
     var body: some View {
         ZStack {
+            // setting up the map background
             Map(coordinateRegion: $map.area, showsUserLocation: true)
                 .ignoresSafeArea()
                 .onAppear() {
                     map.isPhoneLocationEnabled()
                 }
                 .accentColor(Color(.systemGreen))
-
+            
             VStack {
                 Spacer()
+                // share user location button
                 Button {
                     shareLocation()
                 } label: {
@@ -45,33 +46,24 @@ struct MapView: View {
                     .padding()
                     .background(colorScheme == .dark ? Color.green.opacity(0.8) :  Color.green.opacity(0.8) )
                     .cornerRadius(10)
-
-                if sharing {
-                    Text("Lat: \(coordinates.lat)")
-                    Text("Long: \(coordinates.long)")
-                }
             }
         }.sheet(isPresented: $showingFriendsList) {
-            FriendsSelectionView(selectedFriends: $selectedFriends)
+            FriendsSelectionView(selectedFriends: $selectedFriends) // friends selected to share location with
                 .environmentObject(dataManager)
         }
     }
-
+    // function that retrieves current co-ordinates
     func shareLocation() {
-        sharing = true
-        coordinates.lat = map.manager!.location!.coordinate.latitude
-        dataManager.lat = coordinates.lat.rounded(toPlaces: 4)
+        coordinates.lat = map.manager!.location!.coordinate.latitude // get coordinates from map manager
+        dataManager.lat = coordinates.lat.rounded(toPlaces: 4) // round them and submit to the data manager
         coordinates.long = map.manager!.location!.coordinate.longitude
         dataManager.long = coordinates.long.rounded(toPlaces: 4)
-        print("Updating location...")
-        showingFriendsList = true
+        showingFriendsList = true // now show friends list to select friends
     }
 }
 
 // gives access to NSObject, CLLocation methods
 class MapModel: NSObject, ObservableObject, CLLocationManagerDelegate {
-    
-    var share = false
     @Published var area = MKCoordinateRegion(center: defaultValues.defaultLocation, span:defaultValues.defaultZoom)
     var manager: CLLocationManager? // declare as optional service
     
@@ -106,18 +98,20 @@ class MapModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
 }
-
+// list of the current users friends
 struct FriendsSelectionView: View {
     @EnvironmentObject var dataManager: DataManager
-    @Binding var selectedFriends: Set<String>
-    @Environment(\.presentationMode) var presentationMode
+    @Binding var selectedFriends: Set<String> // list containing the chosen friends
+    @Environment(\.presentationMode) var presentationMode // allows to get selection infromation
 
     var body: some View {
         NavigationView {
+            // for each friend
             List(dataManager.friends, id: \.id) { friend in
                 HStack {
-                    Text(friend.username)
+                    Text(friend.username) // display their username
                     Spacer()
+                    // check if you would like to share location with
                     Checkbox(isChecked: selectedFriends.contains(friend.id), onToggle: { isChecked in
                         if isChecked {
                             selectedFriends.insert(friend.id)
@@ -131,20 +125,20 @@ struct FriendsSelectionView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        sendNotifications()
+                        sendNotifications() // send the friend a notification
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
         }
     }
-
+    // sends the location in the form of a notification
     func sendNotifications() {
-        let db = Firestore.firestore()
-        let uidFrom = dataManager.account.id
-        let contents = "lat: \(dataManager.lat), long: \(dataManager.long)"
-        let timestamp = Timestamp(date: Date())
-
+        let db = Firestore.firestore() // access the database
+        let uidFrom = dataManager.account.id // from current user
+        let contents = "lat: \(dataManager.lat), long: \(dataManager.long)" // set coordinates
+        let timestamp = Timestamp(date: Date()) // at current time
+        // create notification to send to each of the selected friends
         for uidTo in selectedFriends {
             let notificationData: [String: Any] = [
                 "uidFrom": uidFrom,
@@ -154,7 +148,7 @@ struct FriendsSelectionView: View {
                 "contents": contents,
                 "timestamp": timestamp
             ]
-
+            // create new record in the notification database
             db.collection("notifications").addDocument(data: notificationData) { error in
                 if let error = error {
                     print("Error sending notification: \(error)")
@@ -165,16 +159,16 @@ struct FriendsSelectionView: View {
         }
     }
 }
-
+// check box srtucture to select each friend
 struct Checkbox: View {
     @State private var isChecked: Bool
     let onToggle: (Bool) -> Void
-
+    // is the box checked
     init(isChecked: Bool, onToggle: @escaping (Bool) -> Void) {
         _isChecked = State(initialValue: isChecked)
         self.onToggle = onToggle
     }
-
+    // on checked - change appearence
     var body: some View {
         Button(action: {
             isChecked.toggle()

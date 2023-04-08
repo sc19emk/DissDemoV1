@@ -21,7 +21,12 @@ struct Application: App {
     
     var body: some Scene {
         WindowGroup {
-            SignInView().environmentObject(DataManager())
+            if dataManager.userIsLoggedIn {
+                HomeView().environmentObject(DataManager())
+            }
+            else {
+                SignInView().environmentObject(DataManager())
+            }
         }
     }
 

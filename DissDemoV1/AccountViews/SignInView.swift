@@ -14,6 +14,7 @@ struct SignInView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var dataManager: DataManager
+    @Environment(\.colorScheme) var colorScheme 
     @State private var showAlert = false // used to display error loggin in warnings to user
     @State private var alertMessage = "" // content in the alert message
     
@@ -31,18 +32,22 @@ struct SignInView: View {
         NavigationView {
             ZStack {
                 Color.black
-                
                 RoundedRectangle(cornerRadius: 0, style: .continuous)
                     .foregroundStyle(.linearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 650, height: 400)
                     .rotationEffect(.degrees(-20))
                     .offset(x:-100,y: -350)
                 
+//                RoundedRectangle(cornerRadius: 10, style: .continuous)
+//                                    .foregroundStyle(.linearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
+//                                    .frame(width: 250, height: 60)
+//                                    .offset(y: -270)
+                
                 VStack(spacing: 20) {
                     Spacer()
-                    Text("Welcome")
+                    Text("Safely")
                         .foregroundColor(.white)
-                        .font(.system(size:50, weight: .bold, design: .rounded))
+                        .font(.system(size:50, weight: .bold, design: .monospaced))
                     Spacer()
                     Group {
                         TextField("Email", text: $email)
@@ -101,11 +106,14 @@ struct SignInView: View {
     }
 
     func logIn() {
-        Auth.auth().signIn(withEmail:email, password:password) { result, error in
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
                 print(error.localizedDescription)
                 self.alertMessage = error.localizedDescription
                 self.showAlert = true
+            } else {
+                // Update userIsLoggedIn state
+                dataManager.userIsLoggedIn = true
             }
         }
     }

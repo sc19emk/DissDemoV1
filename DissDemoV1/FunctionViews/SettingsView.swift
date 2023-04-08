@@ -3,19 +3,20 @@ import Firebase
 
 // Settings Page Code
 struct SettingsView: View {
-    @EnvironmentObject var dataManager: DataManager
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var dataManager: DataManager // for accessing user info
+    @Environment(\.presentationMode) var presentationMode // retrieves current presentation mode
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     
     var body: some View {
         NavigationView {
             VStack {
                 Spacer()
-                let currentUser = dataManager.account
-                let username = currentUser.username
+                let currentUser = dataManager.account // defining the current user
+                let username = currentUser.username // getting their details
                 let number = currentUser.number
                 let email = currentUser.email
                 let emergencyNumber = currentUser.emergencyNumber
+                // page's title
                 HStack {
                     Image(systemName: "person.text.rectangle")
                         .font(.system(size: 30))
@@ -27,10 +28,12 @@ struct SettingsView: View {
                 }
                 Spacer()
                 VStack(spacing: 30) {
+                    // displaying user details
                     userInfoText(title: "Username", value: username)
                     userInfoText(title: "Email", value: email)
                     userInfoText(title: "Contact Number", value: number)
                     userInfoText(title: "Emergency Number", value: emergencyNumber)
+                    // link to change details
                     NavigationLink(destination: UpdateDetailsView()) {
                         Text("Update Details")
                             .bold()
@@ -39,7 +42,7 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity)
                         .background(colorScheme == .dark ? Color(.systemGray6) :  Color.gray.opacity(0.08) )
                         .cornerRadius(10)
-
+                    // access to sign out and delete buttons
                     signOutAndDeleteButtons()
                 }
                 .padding()
@@ -50,7 +53,7 @@ struct SettingsView: View {
             .navigationBarHidden(true)
         }
     }
-    
+    // displaying the user info text fields
     func userInfoText(title: String, value: String) -> some View {
         HStack {
             Text(title + ":")
@@ -60,9 +63,10 @@ struct SettingsView: View {
                 .foregroundColor(.purple)
         }
     }
-
+    // functionality for signing out and deleting accounts
     func signOutAndDeleteButtons() -> some View {
         VStack(spacing: 30) {
+            // logs the current user out and returns them to the sign in page
             Button(action: dataManager.signOut) {
                 Text("Sign Out")
                     .bold()
@@ -73,7 +77,7 @@ struct SettingsView: View {
                 .cornerRadius(10)
 
             Button(action: {
-                dataManager.deleteAccount()
+                dataManager.deleteAccount() // removes all account and accosiated information from the database
                 self.presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Delete Account")
@@ -81,28 +85,29 @@ struct SettingsView: View {
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
             }.padding(.vertical)
                 .frame(maxWidth: .infinity)
-                .background(Color.purple.opacity(0.1) )
+                .background(colorScheme == .dark ? Color.red.opacity(0.6) :  Color.red.opacity(0.5) ) // red delete button to show destructuve action
                 .cornerRadius(10)
         }
     }
 }
-
+// new page to update accoutn details
 struct UpdateDetailsView: View {
-    @EnvironmentObject var dataManager: DataManager
+    @EnvironmentObject var dataManager: DataManager // accessing database
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
-    @State private var newNumber: String = ""
-    @State private var newEmergencyNumber: String = ""
+    @State private var newNumber: String = "" // for changing number
+    @State private var newEmergencyNumber: String = "" // for changing emergency contact
     
     var body: some View {
         VStack(spacing: 11) {
             VStack {
                 Spacer()
+                // text field for updating the user's own phone number
                 TextField("Update your number", text: $newNumber)
                     .padding()
                     .italic()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                
+                // button for updating the user's own phone number
                 Button(action: updateNumber) {
                     Text("Update your Contact Number")
                         .bold()
@@ -114,12 +119,13 @@ struct UpdateDetailsView: View {
             }
             VStack {
                 Spacer()
+                // text field for updating the user's emergency phone number
                 TextField("Update emergency number", text: $newEmergencyNumber)
                     .padding()
                     .italic()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                
+                // button for updating the user's emergency phone number
                 Button(action: updateEmergencyNumber) {
                     Text("Update Emergency Number")
                         .bold()
@@ -134,14 +140,15 @@ struct UpdateDetailsView: View {
         .padding()
         .navigationBarTitle("Update Details", displayMode: .inline)
     }
+    // function to replace the user's phone number in the database
     func updateNumber() {
         guard !newNumber.isEmpty else { return }
-        
+        // accessing user details
         let userId = dataManager.account.id
         print("user id is \(userId)")
         let db = Firestore.firestore() // setting up the database
-        let ref = db.collection("users").document(userId)
-        
+        let ref = db.collection("users").document(userId) // finding the user's record in the database
+        // updating the number field
         ref.updateData([
             "number": newNumber
         ]) { error in
@@ -153,14 +160,14 @@ struct UpdateDetailsView: View {
             }
         }
     }
+    // function to replace the user's emergency number in the database
     func updateEmergencyNumber() {
-        guard !newEmergencyNumber.isEmpty else { return }
-        
+        guard !newEmergencyNumber.isEmpty else { return } // protecting against empty emergency number field
         let userId = dataManager.account.id
         print("user id is \(userId)")
         let db = Firestore.firestore() // setting up the database
-        let ref = db.collection("users").document(userId)
-        
+        let ref = db.collection("users").document(userId) // finding the user's record in the database
+        // replacing the field in the databse
         ref.updateData([
             "emergencyNumber": newEmergencyNumber
         ]) { error in
@@ -173,8 +180,6 @@ struct UpdateDetailsView: View {
         }
     }
 }
-
-
 
 // used for creating the canvas
 struct SettingsView_Previews: PreviewProvider {

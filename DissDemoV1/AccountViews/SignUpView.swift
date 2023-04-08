@@ -121,7 +121,7 @@ struct SignUpView: View {
                     }
                     Text("Sign Up")
                         .foregroundColor(.white)
-                        .font(.system(size:50, weight: .bold, design: .rounded))
+                        .font(.system(size:50, weight: .bold, design: .monospaced))
                     Spacer()
                     signUpForm
                     Spacer()
@@ -204,6 +204,7 @@ struct SignUpView: View {
                 }
                 else {
                     let db = Firestore.firestore()
+                    dataManager.userIsLoggedIn = true
                     db.collection("users").document(result!.user.uid).setData([
                         "username": username,
                         "number": phoneNumber,

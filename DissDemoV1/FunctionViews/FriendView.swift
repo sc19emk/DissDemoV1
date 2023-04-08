@@ -2,22 +2,19 @@
 //  DissDemoV1
 //
 //  Created by Emily Kerkhof on 05/02/2023.
-// able to add friends multiple times
-// able to add self
-// case sensitive
-// doesnt find similar names 
 
 import SwiftUI
 import Firebase
 
 // Friend Page Code
 struct FriendView: View {
-    @EnvironmentObject var dataManager: DataManager
+    @EnvironmentObject var dataManager: DataManager // for database access
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     
     var body: some View {
         NavigationView {
             VStack {
+                // page title
                 HStack {
                     Image(systemName: "person.2")
                         .font(.system(size: 30))
@@ -27,8 +24,9 @@ struct FriendView: View {
                         .bold()
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
                 }
-                
+                // list of the current users friends
                 List(dataManager.friends, id: \.id) { friend in
+                    //link to more information about that friend
                     NavigationLink(destination: FriendDetailsView(friend: friend)) {
                         Text(friend.username)
                             .bold()
@@ -36,14 +34,14 @@ struct FriendView: View {
                         
                     }
                 }
-                
+                // link to a new page to add new friends
                 NavigationLink(destination: AddFriendView()) {
                     Text("Add Friend")
                         .bold()
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
                         .padding(.vertical)
                         .frame(maxWidth: .infinity)
-                        .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.08) )
+                        .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.35))
                         .cornerRadius(10)
                     
                 }.padding()
@@ -96,50 +94,76 @@ struct FriendDetailsView: View {
 }
 
 
-// for adding new friends
+// new view for adding new friends
 struct AddFriendView: View {
     @EnvironmentObject var dataManager: DataManager
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
-    @State private var searchText = ""
-    @State private var foundUsers: [Friend] = []
+    @State private var searchText = "" // used for search query
+    @State private var foundUsers: [Friend] = [] // found with search query
+    @State private var selectedUsers: Set<String> = []  // used for adding new friends
     
     var body: some View {
         VStack {
+            // text entry for entering the friend's username
             TextField("Search by username", text: $searchText)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(10)
-            
-            Button(action: {
-                dataManager.searchUser(query: searchText, completion: { users in
-                    foundUsers = users
-                })
-            }) {
-                Text("Search")
-                    .bold()
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                    .padding(.vertical)
-                    .frame(maxWidth: .infinity)
-                    .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.08) )
-                    .cornerRadius(10)
+            // performs search query
+            if selectedUsers.isEmpty {
+                // Search button
+                Button(action: {
+                    dataManager.searchUser(query: searchText, completion: { users in
+                        foundUsers = users
+                    })
+                }) {
+                    Text("Search")
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background(colorScheme == .dark ? Color.purple.opacity(0.8) :  Color.purple.opacity(0.35))
+                        .cornerRadius(10)
+                }
+            } else {
+                // Add button
+                Button(action: {
+                    for userID in selectedUsers {
+                        dataManager.addFriend(friendID: userID)
+                        sendAlertToFriend(friendID: userID)
+                    }
+                    selectedUsers.removeAll()
+                }) {
+                    Text("Add")
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background(colorScheme == .dark ? Color.green.opacity(0.8) :  Color.green.opacity(0.35))
+                        .cornerRadius(10)
+                }
             }
-            
+            // displays all matching users
             if foundUsers.count > 0 {
                 List(foundUsers, id: \.id) { user in
                     VStack(alignment: .leading) {
-                        Text(user.username)
-                            .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                        Text(user.number)
-                            .font(.subheadline)
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                    }.scrollContentBackground(.hidden) // removes background colour from scroll
-                        .foregroundColor(.white)
-                    .onTapGesture {
-                        dataManager.addFriend(friendID: user.id)
-                        sendAlertToFriend(friendID: user.id)
-                    }
+                        HStack {
+                            Text(user.username)
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            
+                            Checkbox(isChecked: selectedUsers.contains(user.id), onToggle: { isChecked in
+                                if isChecked {
+                                    selectedUsers.insert(user.id)
+                                } else {
+                                    selectedUsers.remove(user.id)
+                                }
+                            })
+                        }
+                    }.background(colorScheme == .dark ? Color.black : Color.white) // change background color based on the color scheme
                 }.padding()
+                    .listStyle(.plain)
+                    .background(colorScheme == .dark ? Color.black : Color.white)
             } else {
                 Text("No results found")
                     .padding()
@@ -147,13 +171,13 @@ struct AddFriendView: View {
         }.padding()
         .navigationTitle("Add Friend")
     }
-    
+    // sends a notification to the person you added
     func sendAlertToFriend(friendID: String) {
-        let uidFrom = dataManager.account.id
+        let uidFrom = dataManager.account.id // setting up the message
         let type = 4
         let contents = "You have been added as a friend."
         let uidTo = friendID
-        let ref = Firestore.firestore().collection("notifications")
+        let ref = Firestore.firestore().collection("notifications") // storing it in the database
         let data: [String: Any] = [
             "uidFrom": uidFrom,
             "uidTo": uidTo,
@@ -162,7 +186,7 @@ struct AddFriendView: View {
             "contents": contents,
             "timestamp": Timestamp()
         ]
-
+        // if any errors occured 
         ref.addDocument(data: data) { error in
             if let error = error {
                 print("Error sending notification: \(error.localizedDescription)")

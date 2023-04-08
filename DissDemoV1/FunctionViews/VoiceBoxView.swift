@@ -15,9 +15,9 @@ struct VoiceBoxView: View {
     var body: some View {
         NavigationStack{
             ZStack {
-                
                 VStack {
                     HStack {
+                        // page title
                         Image(systemName: "waveform.circle")
                             .font(.system(size: 30))
                             .foregroundColor(Color.yellow)
