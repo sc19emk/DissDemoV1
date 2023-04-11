@@ -103,6 +103,7 @@ struct FriendsSelectionView: View {
     @EnvironmentObject var dataManager: DataManager
     @Binding var selectedFriends: Set<String> // list containing the chosen friends
     @Environment(\.presentationMode) var presentationMode // allows to get selection infromation
+    @State private var selectAll: Bool = false // can select all friends at once
 
     var body: some View {
         NavigationView {
@@ -112,7 +113,7 @@ struct FriendsSelectionView: View {
                     Text(friend.username) // display their username
                     Spacer()
                     // check if you would like to share location with
-                    Checkbox(isChecked: selectedFriends.contains(friend.id), onToggle: { isChecked in
+                    Checkbox(isChecked: selectAll || selectedFriends.contains(friend.id), onToggle: { isChecked in
                         if isChecked {
                             selectedFriends.insert(friend.id)
                         } else {
@@ -123,6 +124,14 @@ struct FriendsSelectionView: View {
             }
             .navigationTitle("Select Friends")
             .toolbar {
+                // allowsa users to select all friends rather than just one at a time
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Select All") {
+                        selectAll = true
+                        selectedFriends = Set(dataManager.friends.map { $0.id })
+                    }
+                }
+                // send alerts to all the friends
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         sendNotifications() // send the friend a notification
@@ -175,7 +184,7 @@ struct Checkbox: View {
             onToggle(isChecked)
         }) {
             Image(systemName: isChecked ? "checkmark.square" : "square")
-                .foregroundColor(isChecked ? .blue : .gray)
+                .foregroundColor(isChecked ? .green : .gray)
         }
     }
 }

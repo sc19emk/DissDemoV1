@@ -30,7 +30,8 @@ struct NotificationView: View {
 
             List {                            
                 // for each notification in the database, if it is sent/received by the current user , add to the relevant tab
-                ForEach(notifications.sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedDescending })) { notification in                    if selectedTab == 0 && notification.uidTo == dataManager.account.id {
+                ForEach(notifications.sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedDescending })) { notification in
+                    if selectedTab == 0 && notification.uidTo == dataManager.account.id {
                         NavigationLink(destination: DetailedNotificationView(notification: notification)) {
                             NotificationRow(notification: notification)
                         }

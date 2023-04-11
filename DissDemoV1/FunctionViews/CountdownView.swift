@@ -1,39 +1,22 @@
+/// CountdownView.swift
+// DissDemoV1
 //
-//  CountdownView.swift
-//  DissDemoV1
-//
-//  Created by Emily Kerkhof on 05/02/2023.
+// Created by Emily Kerkhof on 05/02/2023.
 //
 
 import SwiftUI // for view and other structures
 import AVFoundation // to play sound files
 import FirebaseFirestore // for storing countdown data
 
-
-struct ContentView: View {
-    @StateObject var dataManager = DataManager()
-
-    var body: some View {
-        CountdownView(dataManager: dataManager)
-    }
-}
-
 struct CountdownView: View {
-    @ObservedObject var dataManager: DataManager
+    @ObservedObject var dataManager: DataManager // to keep track of the time set
     @StateObject var timerModel: TimerModel
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
-    @State var selection: [String] = [0, 0].map { "\($0)" }
-    @State var data: [(String, [String])] = [
-            ("Hours", Array(0...12).map { "\($0)" }),
-            ("Minutes", Array(0...59).map { "\($0)" }),
-        ]
-    var maxValue: Float = 60.0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // connecting to built in Timer class, using phones clock
-    let dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .long
-            return formatter
-    }()
+    @State var selection: [String] = [0, 0].map { "\($0)" } // time entered by the user
+    @State var data: [(String, [String])] = [            ("Hours", Array(0...12).map { "\($0)" }),            ("Minutes", Array(0...59).map { "\($0)" }),        ]
+
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // connecting to built-in Timer class, using phone's clock
+    
     init(dataManager: DataManager) {
         self.dataManager = dataManager
         self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
@@ -41,40 +24,37 @@ struct CountdownView: View {
     
     var body: some View {
         VStack {
-            //Spacer()
             ZStack {
-                
-                if timerModel.running == true{
-                    VStack {
-                        Text ("\(timerModel.time)") //displays current countdowns's time set/remaining
-                            .font(.system(size:70, weight: .medium, design: .monospaced)) // customising font
-                    }
-                }
-                else{
-                    VStack {
-                        HStack {
-                            Image(systemName: "timer.square")
-                                .font(.system(size: 30))
-                                .foregroundColor(Color.orange)
-                            Text("Countdown")
-                                .font(.system(size: 30, design: .monospaced))
-                                .bold()
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                        }
-                        Spacer()
-                        HStack {
+                VStack {
+                    if timerModel.running {
+                        Text(timerModel.time) //displays current countdown's time set/remaining
+                            .font(.system(size:70, weight: .medium, design: .monospaced)) // customizing font
+                    } else {
+                        VStack {
+                            HStack {
+                                Image(systemName: "timer.square")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(Color.orange)
+                                Text("Countdown")
+                                    .font(.system(size: 30, design: .monospaced))
+                                    .bold()
+                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+                            }
                             Spacer()
-                            Text("Hours").bold()
-                            Spacer()
-                            Text("Minutes").bold()
-                            Spacer()
-                        }
-                        TimePicker(data: data, selection: $selection).frame(height: 300).padding()
-                        Text ("") //displays current countdowns's time set/remaining
-                            .font(.system(size:1)) // customising font
-                            .alert("Playing SOS Alarm", isPresented: $timerModel.alert) { // alert when countdown ends
-                            Button("Stop", role:.cancel) {
-                                timerModel.stopSound() // stops alarm from sounding
+                            HStack {
+                                Spacer()
+                                Text("Hours").bold()
+                                Spacer()
+                                Text("Minutes").bold()
+                                Spacer()
+                            }
+                            TimePicker(data: data, selection: $selection).frame(height: 300).padding()
+                            Text ("") //displays current countdowns's time set/remaining
+                                .font(.system(size:1)) // customizing font
+                                .alert("Playing SOS Alarm", isPresented: $timerModel.alert) { // alert when countdown ends
+                                Button("Stop", role:.cancel) {
+                                    timerModel.stopSound() // stops alarm from sounding
+                                }
                             }
                         }
                     }
@@ -92,7 +72,7 @@ struct CountdownView: View {
                     .background(Color.orange.opacity(0.6))
                     .cornerRadius(10)
                 Button ("Cancel", action: timerModel.cancel) // cancel countdown button
-                    .disabled(timerModel.running==false)
+                    .disabled(!timerModel.running)
                     .padding()
                     .frame(width: 300)
                     .background(Color.gray.opacity(0.6))
@@ -103,10 +83,7 @@ struct CountdownView: View {
             timerModel.countdown()
         } // uses the system timer to keep the timer object correct
     }
-    
-    
 }
-
 
 // creating the timer object
 extension CountdownView {
@@ -116,8 +93,8 @@ extension CountdownView {
             self.dataManager = dataManager
         }
 
-        var running = false // is timer running
-        var alert = false // is timer showing alert / ended
+        @Published var running = false // is timer running
+        @Published var alert = false // is timer showing alert / ended
         var startTime = 0
         var date = Date()
         @Published var time: String = "0:15:00" // default starting time
@@ -126,11 +103,10 @@ extension CountdownView {
                 self.time = "\(Int(minutes)):00" // if time has been set, format like this
             }
         }
-        // function to run the countdown and update time remaining
         
+        // function to run the countdown and update time remaining
         func countdown() {
-            guard running
-            else {return } // only allowed to run when countdown is active. stops alarm sounding endlessly
+            guard running else {return } // only allowed to run when countdown is active. stops alarm sounding endlessly
             let currentDate = Date ()
             let duration = date.timeIntervalSince1970 - currentDate.timeIntervalSince1970
             let date = Date(timeIntervalSince1970: duration)
@@ -154,9 +130,7 @@ extension CountdownView {
             
             // if less than an hour remains
             if duration < 3600.0 {
-                //print(seconds)
                 self.time = String(format: "%d:%02d", minutes, seconds) // display remaining time...
-                
             }
             // if more than an hour remains
             else {
@@ -169,7 +143,6 @@ extension CountdownView {
                 }
             }
         }
-        
         
         // function that starts the countdown, using the time interval set and the current date to calculate the end time
         func start(minutes:Float) {
@@ -191,8 +164,6 @@ extension CountdownView {
             let path = Bundle.main.path(forResource: "alarmSound.mp3", ofType: nil)!
             let url = URL(fileURLWithPath: path)
             do {
-                // create your audioPlayer in your parent class as a property
-                // audioPlayer.numberOfLoops = -1 isnt working...?
                 audioPlayer = try AVAudioPlayer(contentsOf: url)
                 audioPlayer.play()
                 audioPlayer.numberOfLoops = -1
@@ -200,7 +171,7 @@ extension CountdownView {
                 print("couldn't load the file")
             }
         }
-        // stoping the alarm sound
+        // stopping the alarm sound
         func stopSound() {
             audioPlayer.stop()
         }
@@ -261,10 +232,9 @@ struct TimePicker: View  {
     }
 }
 
-//
-//
-//struct CountdownView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CountdownView().environmentObject(DataManager())
-//    }
-//}
+struct ContentView: View {
+    @StateObject var dataManager = DataManager()
+    var body: some View {
+        CountdownView(dataManager: dataManager)
+    }
+}

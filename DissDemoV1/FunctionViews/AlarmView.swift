@@ -22,64 +22,53 @@ struct AlarmView: View {
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State var playing = false // is alarm currently playing
     let emergencyString = "999" // for quick dial
+
     var body: some View {
-        NavigationStack {
-            ZStack{
-                VStack {
-                    HStack {
-                        Image(systemName: "light.beacon.max")
-                            .font(.system(size: 30))
-                            .foregroundColor(Color.pink)
-                        Text("Alarm")
-                            .font(.system(size: 30, design: .monospaced))
-                            .bold()
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                    }
-                    Spacer()
-                    if playing==false {
-                        Button("Play Alarm!") {
-                            playSound()
-                            sendAlertToFriends()
-                            self.playing = true // changes button state
-                    }.padding(.vertical)
-                        .frame(width: 300, height: 200)
-                        .background(colorScheme == .dark ? Color.pink.opacity(0.8) : Color.pink.opacity(0.7))
-                        .cornerRadius(10)
-                        .bold()
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
-                        
-                    }
-                    else {
-                        Button("Stop Alarm") {
-                            stopSound()
-                            self.playing = false // changes button state
-                        }.padding(.vertical)
-                            .frame(width: 300, height: 200)
-                            .background(colorScheme == .dark ? Color.gray.opacity(0.08) : Color.gray.opacity(0.8) )
-                            .cornerRadius(10)
-                            .bold()
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
-                    }
-                    Spacer()
-                    
-                    Button(action: {
-                        let telephone = "tel://"
-                        let formattedString = telephone + emergencyString
-                        guard let url = URL(string: formattedString) else { return }
-                        UIApplication.shared.open(url)
-                        }) {
-                            Image(systemName: "phone.arrow.up.right")
-                            Text("Quick Dial   ")
-                    }.padding(.vertical)
-                        .frame(width: 300)
-                        .background(colorScheme == .dark ? Color.pink.opacity(0.8) : Color.pink.opacity(0.7))
-                        .cornerRadius(10)
-                        .bold()
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color
+        VStack {
+            HStack {
+                Image(systemName: "light.beacon.max")
+                    .font(.system(size: 30))
+                    .foregroundColor(Color.pink)
+                Text("Alarm")
+                    .font(.system(size: 30, design: .monospaced))
+                    .bold()
+            }
+            Spacer()
+
+            if playing == false {
+                Button("Play Alarm!") {
+                    playSound()
+                    sendAlertToFriends()
+                    self.playing = true // changes button state
+                }
+                .customButtonStyle(color: Color.pink, colorScheme: colorScheme, height: 200)
+            } else {
+                Button("Stop Alarm") {
+                    stopSound()
+                    self.playing = false // changes button state
+                }
+                .customButtonStyle(color: Color.gray, colorScheme: colorScheme, height: 200)
+            }
+
+            Spacer()
+
+            Button(action: {
+                let telephone = "tel://"
+                let formattedString = telephone + emergencyString
+                guard let url = URL(string: formattedString) else { return }
+                UIApplication.shared.open(url)
+            }) {
+                HStack {
+                    Image(systemName: "phone.arrow.up.right")
+                    Text("Quick Dial")
                 }
             }
+            .customButtonStyle(color: Color.pink, colorScheme: colorScheme)
         }
+        .padding(.top, 40)
+        .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // apply text color for all enclosed texts
     }
+
     func playSound() {
         let path = Bundle.main.path(forResource: "alarmSound.mp3", ofType: nil)!
         let url = URL(fileURLWithPath: path)
@@ -131,9 +120,21 @@ struct AlarmView: View {
         }
 }
 
+// Custom button style with changeable height dimension
+extension Button {
+    func customButtonStyle(color: Color, colorScheme: ColorScheme, height: CGFloat? = nil) -> some View {
+        self
+            .padding(.vertical)
+            .frame(width: 300, height: height)
+            .background(colorScheme == .dark ? color.opacity(0.8) : color.opacity(0.7))
+            .cornerRadius(10)
+            .bold()
+    }
+}
+
 struct AlarmView_Previews: PreviewProvider {
     static var previews: some View {
-        AlarmView()
+        AlarmView().environmentObject(DataManager())
     }
 }
 

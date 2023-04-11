@@ -43,57 +43,63 @@ struct SignUpView: View {
             // groups as went over 10 items (max 10 items per object)
             Group {
                 // username text field and rectangle to underline
-                TextField("Username", text: $username)
+                TextField("", text: $username)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .padding(.top)
-                    .bold()
-                    .italic()
+                    .placeholder(when: email.isEmpty, alignment: .leading) {
+                        Text("Username").foregroundColor(.white).italic()
+                    }
+
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
                 // email entry - must be correctly formatted
-                TextField("Email", text: $email)
+                TextField("", text: $email)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .padding(.top)
-                    .bold()
-                    .italic()
+                    .placeholder(when: email.isEmpty, alignment: .leading) {
+                        Text("Email").foregroundColor(.white).italic()
+                    }
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
                 // phone number entry
-                TextField("Phone Number", text: $phoneNumber)
+                TextField("", text: $phoneNumber)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .padding(.top)
-                    .bold()
-                    .italic()
+                    .placeholder(when: email.isEmpty, alignment: .leading) {
+                        Text("Phone Number").foregroundColor(.white).italic()
+                    }
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
             }
             Group {
                 // password entry - must be secure and meet criteria below
-                SecureField("Password", text:$password)
+                SecureField("", text:$password)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .padding(.top)
-                    .bold()
-                    .italic()
+                    .placeholder(when: email.isEmpty, alignment: .leading) {
+                        Text("Password").foregroundColor(.white).italic()
+                    }
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
                 
                 // check passwords match
-                SecureField("Re-enter Password", text:$password2)
+                SecureField("", text:$password2)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .padding(.top)
-                    .bold()
-                    .italic()
+                    .placeholder(when: email.isEmpty, alignment: .leading) {
+                        Text("Re-enter Password").foregroundColor(.white).italic()
+                    }
                 Rectangle()
                     .frame(width:350,height: 1)
                     .foregroundColor(.white)
@@ -184,7 +190,7 @@ struct SignUpView: View {
                         }
                     }
             }.ignoresSafeArea()
-        }
+        }.navigationBarBackButtonHidden(true)
     }
     // adds email and password into auth - need to send other details into other table
     func signUp() {

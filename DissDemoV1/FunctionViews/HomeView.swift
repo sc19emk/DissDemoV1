@@ -14,6 +14,7 @@ struct HomeView: View {
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State private var unopenedNotificationsCount: Int = 0 // for the notification page
     @State private var showHelpPopup = false // for the information page
+
     // each page's name and icon
     private let pages: [(String, String)] = [
             ("Account", "person.text.rectangle"),
@@ -25,7 +26,7 @@ struct HomeView: View {
             ("Countdown", "timer.square"),
             ("Alarm", "light.beacon.max"),
             ("Quick Dial", "phone.arrow.up.right"),
-        ]
+    ]
 
     var body: some View {
         NavigationView {
@@ -44,6 +45,7 @@ struct HomeView: View {
                     VStack(spacing: 11) {
                         ForEach(pages, id: \.0) { (page, iconName) in
                             pageElement(page: page, iconName: iconName)
+
                         }
                     }
                     .padding()
@@ -110,17 +112,17 @@ struct HomeView: View {
         } else {
             // other buttons take the user to a new view
             return AnyView(
-                NavigationLink(destination: whichView(viewSelected: page)) {
+                NavigationLink {
+                    whichView(viewSelected: page)
+                } label: {
                     content
-                }.onAppear(perform: fetchUnopenedNotificationsCount) // fetch the unopened notifications count when the button appears
-                    .padding(.vertical)
-                    .background(colorScheme == .dark ? Color(.systemGray6) : Color.white ) //alternate colour scheme for buttons
-                    
-                    .cornerRadius(10)
-                    .shadow(color: iconColor(page: page).opacity(0.4), radius: 5, x: 1, y: 5)
-                )
-            }
+                }.padding(.vertical)
+                .background(colorScheme == .dark ? Color(.systemGray6) : Color.white)
+                .cornerRadius(10)
+                .shadow(color: iconColor(page: page).opacity(0.4), radius: 5, x: 1, y: 5)
+            )
         }
+    }
     // used to return the selected view
     func whichView(viewSelected: String) -> AnyView {
         switch viewSelected {
@@ -198,48 +200,11 @@ struct QuestionMarkButton: View {
     }
 }
 
-final class NavigationStack: ObservableObject {
-    @Published var viewStack: [AnyView] = []
-    
-    func push<Content: View>(_ view: Content) {
-        withAnimation {
-            viewStack.append(AnyView(view))
-        }
-    }
-    
-    func pop() {
-        withAnimation {
-            if !viewStack.isEmpty {
-                viewStack.removeLast()
-            }
-        }
-    }
-}
-
-struct NavigationStackView<Content: View>: View {
-    @EnvironmentObject private var navigationStack: NavigationStack
-    private let content: Content
-    
-    init(@ViewBuilder content: @escaping () -> Content) {
-        self.content = content()
-    }
-    
-    var body: some View {
-        ZStack {
-            if !navigationStack.viewStack.isEmpty {
-                navigationStack.viewStack.last
-            } else {
-                content
-                    .transition(.move(edge: .trailing))
-            }
-        }
-    }
-}
-
 // used for creating the canvas
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         // create several content views to make several screens with different devices etc
-        HomeView().environmentObject(DataManager())
+        HomeView()
+            .environmentObject(DataManager())
     }
 }
