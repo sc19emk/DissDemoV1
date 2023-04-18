@@ -13,14 +13,11 @@ struct CountdownView: View {
     @StateObject var timerModel: TimerModel
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State var selection: [String] = [0, 0].map { "\($0)" } // time entered by the user
-    @State var data: [(String, [String])] = [            ("Hours", Array(0...12).map { "\($0)" }),            ("Minutes", Array(0...59).map { "\($0)" }),        ]
+    @State var data: [(String, [String])] = [
+        ("Hours", Array(0...12).map { "\($0)" }),
+        ("Minutes", Array(0...59).map { "\($0)" }),        ]
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // connecting to built-in Timer class, using phone's clock
-    
-    init(dataManager: DataManager) {
-        self.dataManager = dataManager
-        self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
-    }
     
     var body: some View {
         VStack {
@@ -82,6 +79,11 @@ struct CountdownView: View {
         }.onReceive(timer) { _ in
             timerModel.countdown()
         } // uses the system timer to keep the timer object correct
+    }
+    
+    init(dataManager: DataManager) {
+        self.dataManager = dataManager
+        self._timerModel = StateObject(wrappedValue: TimerModel(dataManager: dataManager))
     }
 }
 
@@ -207,20 +209,20 @@ extension CountdownView {
         }
     }
 }
-
+// time picker wheel object
 struct TimePicker: View  {
     typealias Label = String
     typealias Entry = String
-    let data: [ (String, [String]) ]
-    @Binding var selection: [Entry]
+    let data: [ (String, [String]) ] // setting up the data struct
+    @Binding var selection: [Entry] // time the user selects
 
     var body: some View {
         GeometryReader { geometry in
             HStack {
-                ForEach(0..<2) { column in
+                ForEach(0..<2) { column in // for the columns, hour and minute
                     Picker(self.data[column].0, selection: self.$selection[column]) {
                         ForEach(0..<Int(self.data[column].1.count), id: \.self) { row in
-                            Text(verbatim: self.data[column].1[row])
+                            Text(verbatim: self.data[column].1[row]) // each row is the number
                             .tag(self.data[column].1[row])
                         }
                     }

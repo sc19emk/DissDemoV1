@@ -45,14 +45,14 @@ struct HomeView: View {
                     VStack(spacing: 11) {
                         ForEach(pages, id: \.0) { (page, iconName) in
                             pageElement(page: page, iconName: iconName)
-
+                            
                         }
                     }
                     .padding()
                 }
-
                 Spacer()
             }
+            .ignoresSafeArea(edges: .bottom)
             .navigationBarTitle("Home", displayMode: .inline) // for navigation back to the home page
             .navigationBarHidden(true)
             .overlay(
