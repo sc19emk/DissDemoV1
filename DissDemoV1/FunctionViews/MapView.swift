@@ -10,7 +10,8 @@ import MapKit // for map view
 import FirebaseFirestore
 
 enum defaultValues {
-    static let defaultLocation = CLLocationCoordinate2D(latitude: 53.8078, longitude: -1.5550) // setting default location to University of Leeds
+
+    static let defaultLocation = CLLocationCoordinate2D(latitude: 53.8173, longitude: -1.5553) // setting default location to University of Leeds
     static let defaultZoom = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005) // setting default zoom level to street/building level
 }
 
@@ -44,7 +45,7 @@ struct MapView: View {
                 }.bold()
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
                     .padding()
-                    .background(colorScheme == .dark ? Color.green.opacity(0.8) :  Color.green.opacity(0.8) )
+                    .background(colorScheme == .dark ? Color.mint.opacity(0.8) :  Color.mint.opacity(0.8) )
                     .cornerRadius(10)
             }
         }.sheet(isPresented: $showingFriendsList) {

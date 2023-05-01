@@ -21,7 +21,6 @@ struct AlarmView: View {
     @EnvironmentObject var dataManager: DataManager // to alert friends about SOS trigger
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
     @State var playing = false // is alarm currently playing
-    let emergencyString = "999" // for quick dial
 
     var body: some View {
         VStack {
@@ -54,7 +53,8 @@ struct AlarmView: View {
 
             Button(action: {
                 let telephone = "tel://"
-                let formattedString = telephone + emergencyString
+                let emergencyNumber = dataManager.account.emergencyNumber
+                let formattedString = telephone + emergencyNumber
                 guard let url = URL(string: formattedString) else { return }
                 UIApplication.shared.open(url)
             }) {

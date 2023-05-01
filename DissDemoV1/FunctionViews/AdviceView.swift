@@ -14,7 +14,7 @@ struct AdviceView: View {
                         // page title
                         Image(systemName: "character.book.closed")
                             .font(.system(size: 30))
-                            .foregroundColor(Color.mint)
+                            .foregroundColor(Color.cyan)
                         Text("Advice")
                             .font(.system(size: 30, design: .monospaced))
                             .bold()

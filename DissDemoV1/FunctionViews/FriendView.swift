@@ -68,14 +68,14 @@ struct FriendDetailsView: View {
                     .foregroundColor(Color.purple) // change text color based on the color scheme
             }
             
-            HStack {
-                Text("Phone Number: ")
-                    .bold()
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
-                Text("\(friend.number)")
-                    .bold()
-                    .foregroundColor(Color.purple) // change text color based on the color scheme
-            }
+//            HStack {
+//                Text("Phone Number: ")
+//                    .bold()
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
+//                Text("\(friend.number)")
+//                    .bold()
+//                    .foregroundColor(Color.purple) // change text color based on the color scheme
+//            }
             Button(
                 action: {
                     dataManager.deleteFriend(friendID: friend.id)
@@ -85,7 +85,7 @@ struct FriendDetailsView: View {
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // change text color based on the color scheme
                     .padding(.vertical)
                     .frame(maxWidth: .infinity)
-                    .background(colorScheme == .dark ? Color.red.opacity(0.8) :  Color.red.opacity(0.08) )
+                    .background(colorScheme == .dark ? Color.red.opacity(0.8) :  Color.red.opacity(0.28) )
                     .cornerRadius(10)
             }
         }.padding()

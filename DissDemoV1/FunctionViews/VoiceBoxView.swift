@@ -186,7 +186,7 @@ struct Transcript: Identifiable {
 var allTranscripts = [
     Transcript(id: 1, voiceActor: "21 Year Old Male from Lincoln", summary: "Short Conversation with Boyfriend", text:text1, length: 5, pathname: "ShortConvo1.mp3"),
     Transcript(id: 2, voiceActor: "23 Year Old Male from Liverpool", summary: "Long Conversation with Boyfriend", text:text2, length:10, pathname: "LongConvo1.mp3"),
-    Transcript(id: 3, voiceActor: "22 Year Old Male from London", summary: "Short Conversation with Friend", text:text3, length:8, pathname: "ShortConvo1.mp3")
+    Transcript(id: 3, voiceActor: "22 Year Old Male from London", summary: "Short Conversation with Friend", text:text3, length:8, pathname: "ShortConvo2.mp3")
 ]
 
 // text within the transcrpits to display on screen

@@ -30,6 +30,7 @@ class DataManager: ObservableObject {
     @Published var currentUser =  "" // what is their username
     @Published var lat: Double = 0 // used for sharing location
     @Published var long: Double = 0 // used for sharing location
+    @Published var unopenedNotificationsCount:Int = 0 // number of unopened notifications for the user
     
     let db = Firestore.firestore() // setting up the database
     
@@ -55,6 +56,7 @@ class DataManager: ObservableObject {
                             let currentUser = Account(id:id, email:email, username:username, number:number, emergencyNumber:emergencyNumber)
                             self.account = currentUser
                             self.fetchFriends() // Call fetchFriends after setting the account property
+                            self.fetchUnopenedNotificationsCount() // fetch number of unopened notifications
                         }
                     }
                 }
@@ -62,7 +64,7 @@ class DataManager: ObservableObject {
         }
     }
     
-func fetchFriends() {
+    func fetchFriends() {
         friends.removeAll() // empty any previously held contacts
         let ref = db.collection("friends") // access database table friends
         let query1 = ref.whereField("friend1", isEqualTo: self.account.id) // check for own user id
@@ -105,7 +107,7 @@ func fetchFriends() {
             }
             dispatchGroup.leave() // leave the group as finished
         }
-    }
+}
     
     // retrieves friend's details using their user id
     func fetchFriendDetails(friendID: String) {
@@ -294,7 +296,20 @@ func fetchFriends() {
             }
         }
     }
-
+    func fetchUnopenedNotificationsCount() {
+        let ref = db.collection("notifications")
+        ref.whereField("uidTo", isEqualTo: account.id) // to the current user
+           .whereField("opened", isEqualTo: false) // that have not been opened
+           .addSnapshotListener { (snapshot, error) in
+                if let error = error {
+                    print(error.localizedDescription) // error handler
+                    return
+                }
+                guard let documents = snapshot?.documents else { return } // get the matching items
+                self.unopenedNotificationsCount = documents.count // count the number of matching notifications
+            }
+    }
+    
     // setting up data manager
     init() {
         Auth.auth().addStateDidChangeListener { auth, user in

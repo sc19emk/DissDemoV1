@@ -12,7 +12,6 @@ import FirebaseFirestore
 struct HomeView: View {
     @EnvironmentObject var dataManager: DataManager // to access database information
     @Environment(\.colorScheme) var colorScheme // changes when in dark mode
-    @State private var unopenedNotificationsCount: Int = 0 // for the notification page
     @State private var showHelpPopup = false // for the information page
 
     // each page's name and icon
@@ -80,8 +79,8 @@ struct HomeView: View {
                     .bold()
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // Update text color based on the color scheme
                 // shows notification count on the notification button
-                if page == "Notifications" && unopenedNotificationsCount > 0 {
-                    Text("\(unopenedNotificationsCount)")
+                if page == "Notifications" && dataManager.unopenedNotificationsCount > 0 {
+                    Text("\(dataManager.unopenedNotificationsCount)")
                         .font(.system(size: 12))
                         .foregroundColor(.white)
                         .padding(5)
@@ -156,9 +155,9 @@ struct HomeView: View {
         case "Notifications":
             return Color.blue
         case "Advice":
-            return Color.mint
+            return Color.cyan
         case "Map":
-            return Color.green
+            return Color.mint
         case "Voice Box":
             return Color.yellow
         case "Countdown":
@@ -169,17 +168,6 @@ struct HomeView: View {
             return Color.pink
         default:
             return Color.black
-        }
-    }
-    // function to find how many unopened notifications the current user has
-    func fetchUnopenedNotificationsCount() {
-        let ref = Firestore.firestore().collection("notifications")
-        ref.whereField("uidTo", isEqualTo: dataManager.account.id).whereField("opened", isEqualTo: false).addSnapshotListener { snapshot, error in
-            guard error == nil else {
-                print(error!.localizedDescription)
-                return
-            }
-            unopenedNotificationsCount = snapshot?.documents.count ?? 0
         }
     }
 }
